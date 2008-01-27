@@ -7,7 +7,8 @@
 
 */
 
-#include "y.tab.h"
+//#include "y.tab.h"
+#include "grammar.h"
 
 #include "token.h"
 
