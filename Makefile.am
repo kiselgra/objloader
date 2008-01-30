@@ -4,3 +4,10 @@ spinat_SOURCES = src/grammar.yy  src/lexer.h  src/obj_reader.ll  src/objfile_log
 AM_CPPFLAGS = -Isrc/
 AM_YFLAGS = -d
 
+
+.PHONY: doc
+doc: 
+	cd doc; doxygen doxyfile
+
+# include $(top_srcdir)/aminclude.am
+# SUBDIRS = src

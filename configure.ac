@@ -2,7 +2,19 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(FULL-PACKAGE-NAME, VERSION, BUG-REPORT-ADDRESS)
+AC_INIT(objloader, 0.0.1, BUG-REPORT-ADDRESS)
+
+	#doxygen
+# DX_HTML_FEATURE(ON)
+#	DX_CHM_FEATURE(OFF)
+#	DX_CHI_FEATURE(OFF)
+#	DX_MAN_FEATURE(OFF)
+#	DX_RTF_FEATURE(OFF)
+#	DX_XML_FEATURE(OFF)
+#	DX_PDF_FEATURE(OFF)
+#	DX_PS_FEATURE(OFF)
+#	DX_INIT_DOXYGEN(objloader, doxygen.cfg)
+
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/objfile_logger.h])
 AC_CONFIG_HEADER([config.h])
