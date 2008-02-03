@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(objloader, 0.0.1, BUG-REPORT-ADDRESS)
+AC_INIT(libobjloader, 0.0.1, BUG-REPORT-ADDRESS)
 
 	#doxygen
 # DX_HTML_FEATURE(ON)
@@ -16,15 +16,16 @@ AC_INIT(objloader, 0.0.1, BUG-REPORT-ADDRESS)
 #	DX_INIT_DOXYGEN(objloader, doxygen.cfg)
 
 AM_INIT_AUTOMAKE
-AC_CONFIG_SRCDIR([src/objfile_logger.h])
+AC_CONFIG_SRCDIR([src/objloader.cpp])
 AC_CONFIG_HEADER([config.h])
-AC_CONFIG_FILES(Makefile)
+AC_CONFIG_FILES(Makefile src/Makefile doc/Makefile lib-config-src/Makefile test/Makefile)
 
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_LEX
 AC_PROG_YACC
+AC_PROG_LIBTOOL
 
 # Checks for libraries.
 
