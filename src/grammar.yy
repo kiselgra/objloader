@@ -5,6 +5,7 @@
 %token TKFACE
 %token TKUMTL
 %token TKMTLL
+%token TKGRP
 
 %token TKIDENTIFIER
 
@@ -69,6 +70,7 @@ entry:
 	| face								{ dbg("entry"); }
 	| usemtl							{ dbg("entry"); }
 	| mtllib							{ dbg("entry"); }
+	| group								{ dbg("entry"); }
 	;
 
 face:
@@ -108,6 +110,9 @@ mtllib:
 	TKMTLL name							{ dbg("mtllib");  	if (!yyobj->LoadMaterialFile(last_name)) yyerror(((std::string)"Cannot read material lib '" + last_name + "'.").c_str());  }
 	;
 
+group:
+	TKGRP name							{ dbg("group");		yyobj->StartGroup(last_name); }
+
 floating:
 	TKNUMBER							{ floats.push(atof(currtok->Text().c_str())); $$ = 0; }
 	;
@@ -119,6 +124,7 @@ index:
 name:
 	TKIDENTIFIER						{ last_name = currtok->Text(); }
 	;
+
 
 %%
 

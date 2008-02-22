@@ -30,6 +30,8 @@ public:
 	virtual bool LoadMaterialFile(const std::string &name) {}
 	virtual bool CurrentMaterial(const std::string &name) {}
 
+	virtual bool StartGroup(const std::string &name) {}
+
 	virtual void AddVertex(float x, float y, float z) 		= 0;
 	virtual void AddTexCoord(float u, float v, float w = 0) = 0;
 	virtual void AddNormal(float x, float y, float z)		= 0;

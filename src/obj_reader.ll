@@ -58,6 +58,7 @@ ALNUM ({DIGIT}|{ALPHA})
 <INITIAL>"/"								{	OUT("/");						return new Token('/', yytext, yylineno);		}
 <INITIAL>"usemtl"							{	OUT("usemtl");					return new Token(TKUMTL, yytext, yylineno);	}
 <INITIAL>"mtllib"							{	OUT("mtllib");					return new Token(TKMTLL, yytext, yylineno);	}
+<INITIAL>g									{	OUT("g");						return new Token(TKGRP, yytext, yylineno); }
 
 <INITIAL>{ALPHA}{ALNUM}*					{	OUT("identifier");				return new Token(TKIDENTIFIER, yytext, yylineno); }
 
