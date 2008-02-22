@@ -35,7 +35,7 @@ using namespace std;
 
 WHITE_SPACE [\n\r\ \t\b\012]
 DIGIT [0-9]
-ALPHA [a-zA-Z_()]
+ALPHA [a-zA-Z_().]
 ALNUM ({DIGIT}|{ALPHA})
 
 %s COMMENT
