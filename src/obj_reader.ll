@@ -50,18 +50,18 @@ ALNUM ({DIGIT}|{ALPHA})
 <COMMENT>\n									{	BEGIN(INITIAL); }
 <COMMENT>.*									{	OUT("comment: " << yytext); }
 
-<INITIAL>"-"?{DIGIT}+("."{DIGIT}*)?			{	OUT("number: " << yytext);		return new Token(TKNUMBER, yytext);	}
-<INITIAL>vt									{ 	OUT("texcoord");				return new Token(TKTEX, yytext);	}
-<INITIAL>vn									{ 	OUT("normal");					return new Token(TKNORMAL, yytext);	}
-<INITIAL>v									{ 	OUT("vertex");					return new Token(TKVERTEX, yytext);	}
-<INITIAL>f									{ 	OUT("face");					return new Token(TKFACE, yytext);	}
-<INITIAL>"/"								{	OUT("/");						return new Token('/', yytext);		}
-<INITIAL>"usemtl"							{	OUT("usemtl");					return new Token(TKUMTL, yytext);	}
-<INITIAL>"mtllib"							{	OUT("mtllib");					return new Token(TKMTLL, yytext);	}
+<INITIAL>"-"?{DIGIT}+("."{DIGIT}*)?			{	OUT("number: " << yytext);		return new Token(TKNUMBER, yytext, yylineno);	}
+<INITIAL>vt									{ 	OUT("texcoord");				return new Token(TKTEX, yytext, yylineno);	}
+<INITIAL>vn									{ 	OUT("normal");					return new Token(TKNORMAL, yytext, yylineno);	}
+<INITIAL>v									{ 	OUT("vertex");					return new Token(TKVERTEX, yytext, yylineno);	}
+<INITIAL>f									{ 	OUT("face");					return new Token(TKFACE, yytext, yylineno);	}
+<INITIAL>"/"								{	OUT("/");						return new Token('/', yytext, yylineno);		}
+<INITIAL>"usemtl"							{	OUT("usemtl");					return new Token(TKUMTL, yytext, yylineno);	}
+<INITIAL>"mtllib"							{	OUT("mtllib");					return new Token(TKMTLL, yytext, yylineno);	}
 
-<INITIAL>{ALPHA}{ALNUM}*					{	OUT("identifier");				return new Token(TKIDENTIFIER, yytext); }
+<INITIAL>{ALPHA}{ALNUM}*					{	OUT("identifier");				return new Token(TKIDENTIFIER, yytext, yylineno); }
 
-<INITIAL>.									{ 	OUT("char");					return new Token(yytext[0], yytext);}
+<INITIAL>.									{ 	OUT("char");					return new Token(yytext[0], yytext, yylineno);}
 
 
 

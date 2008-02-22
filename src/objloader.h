@@ -39,6 +39,8 @@ public:
 	virtual void AddFaceNode(enum VN,  int vertex, int normal)				 = 0;
 	virtual void AddFaceNode(enum V,   int vertex)							 = 0;
 	virtual void FaceDone()													 = 0;
+
+	int CurrentLine() { return 0; } //return currtok ? currtok->
 };
 
 
