@@ -3,6 +3,9 @@
 #include "parser.h"
 #include "lexer.h"
 
+#include "token.h"
+
+extern Token *currtok;
 extern ObjLoader *yyobj;
 
 ObjLoader::ObjLoader()
@@ -21,6 +24,11 @@ bool ObjLoader::Load(const std::string name)
 	yyobj = this;
 
 	yyparse();
+}
+	
+int ObjLoader::CurrentLine() 
+{ 
+	return currtok ? currtok->Line() : -1; 
 }
 
 ObjLoader *yyobj;

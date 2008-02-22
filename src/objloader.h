@@ -4,6 +4,7 @@
 
 #include <string>
 
+
 /*!	Interface für Alias/Wavefront Obj Datei Loader.
  *
  * 	Nach den einlesen eines Vertex, einer Texturkoordinate oder einer Normalen wird direkt die entsprechende
@@ -42,7 +43,7 @@ public:
 	virtual void AddFaceNode(enum V,   int vertex)							 = 0;
 	virtual void FaceDone()													 = 0;
 
-	int CurrentLine() { return 0; } //return currtok ? currtok->
+	int CurrentLine();
 };
 
 
