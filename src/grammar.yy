@@ -112,6 +112,7 @@ mtllib:
 
 group:
 	TKGRP name							{ dbg("group");		yyobj->StartGroup(last_name); }
+	;
 
 floating:
 	TKNUMBER							{ floats.push(atof(currtok->Text().c_str())); $$ = 0; }

@@ -22,6 +22,8 @@ public:
 	virtual void AddVertex(float x, float y, float z) 							{	std::cout << "AddVertex    " << x << "  " << y << "  " << z   << std::endl;	}
 	virtual void AddTexCoord(float u, float v, float w = 0) 					{	std::cout << "AddTexCoord  " << u << "  " << v << "  " << w   << std::endl;	}
 	virtual void AddNormal(float x, float y, float z)							{	std::cout << "AddNormal    " << x << "  " << y << "  " << z   << std::endl;	}
+
+	virtual void StartGroup(const std::string &name)							{	std::cout << "Group " << name << std::endl; }
 	
 	virtual void AddFaceNode(enum VTN, int vertex, int texcoord, int normal)	{	std::cout << "FaceNode:   v=" << vertex << "  t=" << texcoord << "  n=" << normal  << std::endl;	}
 	virtual void AddFaceNode(enum VT,  int vertex, int texcoord)				{	std::cout << "FaceNode:   v=" << vertex << "  t=" << texcoord << std::endl;	}
