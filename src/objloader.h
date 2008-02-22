@@ -25,7 +25,7 @@ public:
 	ObjLoader();
 	~ObjLoader();
 
-	bool Load(const std::string name);
+	virtual bool Load(const std::string name);
 	
 	virtual bool LoadMaterialFile(const std::string &name) {}
 	virtual bool CurrentMaterial(const std::string &name) {}
