@@ -33,9 +33,9 @@ using namespace std;
 %option noyywrap
 %option yylineno
 
-WHITE_SPACE [\n\ \t\b\012]
+WHITE_SPACE [\n\r\ \t\b\012]
 DIGIT [0-9]
-ALPHA [a-zA-Z_]
+ALPHA [a-zA-Z_()]
 ALNUM ({DIGIT}|{ALPHA})
 
 %s COMMENT
@@ -50,7 +50,7 @@ ALNUM ({DIGIT}|{ALPHA})
 <COMMENT>\n									{	BEGIN(INITIAL); }
 <COMMENT>.*									{	OUT("comment: " << yytext); }
 
-<INITIAL>"-"?{DIGIT}+("."{DIGIT}*)?			{	OUT("number: " << yytext);		return new Token(TKNUMBER, yytext, yylineno);	}
+<INITIAL>"-"?{DIGIT}+("."{DIGIT}*("e""-"?{DIGIT}+)?)?			{	OUT("number: " << yytext);		return new Token(TKNUMBER, yytext, yylineno);	}
 <INITIAL>vt									{ 	OUT("texcoord");				return new Token(TKTEX, yytext, yylineno);	}
 <INITIAL>vn									{ 	OUT("normal");					return new Token(TKNORMAL, yytext, yylineno);	}
 <INITIAL>v									{ 	OUT("vertex");					return new Token(TKVERTEX, yytext, yylineno);	}
@@ -75,9 +75,11 @@ static std::list<Token*> tokens;
 
 int yylex()
 {
+//	cerr << "MY yylex called" << endl;
 	currtok = yylex_int();
 	if (currtok)
 	{
+//		cerr << "token: " << currtok->Code() << "       '" << currtok->Text() << "'" << endl;
 		tokens.push_back(currtok);
 		return currtok->Code();
 	}

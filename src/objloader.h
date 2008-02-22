@@ -41,6 +41,7 @@ public:
 	virtual void AddFaceNode(enum VT,  int vertex, int texcoord)			 = 0;
 	virtual void AddFaceNode(enum VN,  int vertex, int normal)				 = 0;
 	virtual void AddFaceNode(enum V,   int vertex)							 = 0;
+	//! Achtung, bei Obj sind die Vertices ab 1 indiziert (belegen zumindest meine Beispielmodelle)
 	virtual void FaceDone()													 = 0;
 
 	int CurrentLine();

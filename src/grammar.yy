@@ -21,9 +21,10 @@
 #include <iostream>
 #include <queue>
 
+extern Token *currtok;
 inline int yyerror(const char *err)
 {
-	std::cerr << "Error on line " << yylineno << ": " << err << std::endl;
+	std::cerr << "Error on line " << yylineno << ": " << err << ".    current token = '" << currtok->Text() << "'" << std::endl;
 }
 
 extern ObjLoader *yyobj;
