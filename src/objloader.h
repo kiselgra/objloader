@@ -28,8 +28,8 @@ public:
 
 	virtual bool Load(const std::string name);
 	
-	virtual bool LoadMaterialFile(const std::string &name) {}
-	virtual bool CurrentMaterial(const std::string &name) {}
+	virtual bool LoadMaterialFile(const std::string &name) { return true; }
+	virtual bool CurrentMaterial(const std::string &name) { return true; }
 
 	virtual void StartGroup(const std::string &name) {}
 
