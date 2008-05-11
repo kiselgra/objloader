@@ -19,7 +19,7 @@
 
 using namespace std;
 
-#define YY_DECL Token* yylex_int()
+#define YY_DECL Token* yylex_int_libobj()
 
 // #define LEX_DEBUG_OUT
 #ifdef LEX_DEBUG_OUT
@@ -77,7 +77,7 @@ static std::list<Token*> tokens;
 int yylex()
 {
 //	cerr << "MY yylex called" << endl;
-	currtok = yylex_int();
+	currtok = yylex_int_libobj();
 	if (currtok)
 	{
 //		cerr << "token: " << currtok->Code() << "       '" << currtok->Text() << "'" << endl;

@@ -19,11 +19,18 @@ ObjLoader::~ObjLoader()
 bool ObjLoader::Load(const std::string name)
 {
 	if (name != "")
-		yyin = fopen(name.c_str(), "r");
+		libobjin = fopen(name.c_str(), "r");
+
+// 	printf("------\n");
+// 	while (!feof(yyin))
+// 		putc(fgetc(yyin), stdout);
+// 	printf("------\n");
+// 
+// 	exit (0);
 
 	yyobj = this;
 
-	yyparse();
+	libobjparse();
 }
 	
 int ObjLoader::CurrentLine() 

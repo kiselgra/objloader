@@ -25,7 +25,11 @@
 extern Token *currtok;
 inline int yyerror(const char *err)
 {
-	std::cerr << "Error on line " << yylineno << ": " << err << ".    current token = '" << currtok->Text() << "'" << std::endl;
+	std::cerr << "Objloader: Error on line " << libobjlineno << ": " << err << ".    current token = ";
+	if (currtok)
+		std::cerr << "'" << currtok->Text() << "'" << std::endl;
+	else
+		std::cerr << "<empty>" << std::endl;
 }
 
 extern ObjLoader *yyobj;

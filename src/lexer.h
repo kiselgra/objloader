@@ -5,10 +5,10 @@
 #include <cstdio>
 #include "token.h"
 
-extern int yylex();
-extern int yylineno;
+extern int libobjlex();
+extern int libobjlineno;
 extern Token *currtok;
-extern std::FILE *yyin;
+extern std::FILE *libobjin;
 
 
 #endif
