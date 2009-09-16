@@ -60,6 +60,7 @@ ALNUM ({DIGIT}|{ALPHA})
 <INITIAL>"mtllib"							{	OUT("mtllib");					return new Token(TKMTLL, yytext, yylineno);	}
 <INITIAL>g									{	OUT("g");						return new Token(TKGRP, yytext, yylineno); }
 <INITIAL>o									{	OUT("g");						return new Token(TKONAME, yytext, yylineno); }
+<INITIAL>s									{	OUT("s");						return new Token(TKSNAME, yytext, yylineno); }
 
 <INITIAL>{ALPHA}{ALNUM}*					{	OUT("identifier");				return new Token(TKIDENTIFIER, yytext, yylineno); }
 

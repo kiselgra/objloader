@@ -7,6 +7,7 @@
 %token TKMTLL
 %token TKGRP
 %token TKONAME
+%token TKSNAME
 
 %token TKIDENTIFIER
 
@@ -77,6 +78,7 @@ entry:
 	| usemtl							{ dbg("entry"); }
 	| mtllib							{ dbg("entry"); }
 	| group								{ dbg("entry"); }
+	| sgroup							{ dbg("entry"); }
 	| object_name						{ dbg("entry"); }
 	;
 
@@ -119,6 +121,11 @@ mtllib:
 
 group:
 	TKGRP name							{ dbg("group");		yyobj->StartGroup(last_name); }
+	;
+
+sgroup:
+	TKSNAME index						{ dbg("sgroup");	}
+	| TKSNAME name						{ dbg("sgroup");	}
 	;
 
 object_name:
