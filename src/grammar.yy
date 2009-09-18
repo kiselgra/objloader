@@ -28,7 +28,7 @@ inline int yyerror(const char *err)
 {
 	std::cerr << "Objloader: Error on line " << libobjlineno << ": " << err << ".    current token = ";
 	if (currtok)
-		std::cerr << "'" << currtok->Text() << "'" << std::endl;
+		std::cerr << currtok->Code() << "    '" << currtok->Text() << "'" << std::endl;
 	else
 		std::cerr << "<empty>" << std::endl;
 }
@@ -64,6 +64,14 @@ std::string last_name;
 %}
 
 %%
+
+/*
+ *
+ *	IMPORTANT:
+ *		if you reduce an 'index' or a 'floating' but don't want to use it - pop it nevertheless!
+ *		otherwise the rest of the system is going to be confused about this.
+ *
+ */
 
 obj_file:
 	obj_file entry						{ dbg("obj -> obj_file entry"); }
@@ -124,7 +132,7 @@ group:
 	;
 
 sgroup:
-	TKSNAME index						{ dbg("sgroup");	}
+	TKSNAME index						{ int grp_idx = pop_int();	dbg("sgroup");	}
 	| TKSNAME name						{ dbg("sgroup");	}
 	;
 
