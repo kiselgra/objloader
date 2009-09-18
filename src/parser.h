@@ -3,6 +3,7 @@
 #define __PARSER_H__ 
 
 extern int libobjparse();
+extern int mtlparse();
 
 #endif
 

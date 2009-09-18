@@ -23,36 +23,36 @@
 #include <iostream>
 #include <queue>
 
-extern Token *currtok;
+extern Token *obj_currtok;
 inline int yyerror(const char *err)
 {
 	std::cerr << "Objloader: Error on line " << libobjlineno << ": " << err << ".    current token = ";
-	if (currtok)
-		std::cerr << currtok->Code() << "    '" << currtok->Text() << "'" << std::endl;
+	if (obj_currtok)
+		std::cerr << obj_currtok->Code() << "    '" << obj_currtok->Text() << "'" << std::endl;
 	else
 		std::cerr << "<empty>" << std::endl;
 }
 
 extern ObjLoader *yyobj;
 
-std::queue<float> floats;
-std::queue<int> ints;
+static std::queue<float> floats;
+static std::queue<int> ints;
 
-float pop_float()
+static float pop_float()
 {
 	float f = floats.front();
 	floats.pop();
 	return f;
 }
 
-int pop_int()
+static int pop_int()
 {
 	int i = ints.front();
 	ints.pop();
 	return i;
 }
 
-std::string last_name;
+static std::string last_name;
 
 // #define YACC_DEBUG_OUT
 
@@ -141,15 +141,15 @@ object_name:
 	;
 
 floating:
-	TKNUMBER							{ floats.push(atof(currtok->Text().c_str())); $$ = 0; }
+	TKNUMBER							{ floats.push(atof(obj_currtok->Text().c_str())); $$ = 0; }
 	;
 	
 index:
-	TKNUMBER							{ ints.push(atoi(currtok->Text().c_str())); $$ = 0; }
+	TKNUMBER							{ ints.push(atoi(obj_currtok->Text().c_str())); $$ = 0; }
 	;
 
 name:
-	TKIDENTIFIER						{ last_name = currtok->Text(); }
+	TKIDENTIFIER						{ last_name = obj_currtok->Text(); }
 	;
 
 

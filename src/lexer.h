@@ -7,8 +7,13 @@
 
 extern int libobjlex();
 extern int libobjlineno;
-extern Token *currtok;
+extern Token *obj_currtok;
 extern std::FILE *libobjin;
+
+extern int mtllex();
+extern int mtllineno;
+extern Token *mtl_currtok;
+extern std::FILE *mtlin;
 
 
 #endif

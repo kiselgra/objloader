@@ -3,6 +3,7 @@
 #define __OBJFILE_H__ 
 
 #include <string>
+#include <map>
 
 
 /*!	Interface für Alias/Wavefront Obj Datei Loader.
@@ -17,18 +18,36 @@
  */
 class ObjLoader
 {
+protected:
+	std::string obj_filename;
+
 public:
 	enum VTN { VTN };
 	enum VN  { VN };
 	enum VT  { VT };
 	enum V   { V };
 
+	struct Mtl
+	{
+		float amb_r, amb_g, amb_b,
+			  dif_r, dif_g, dif_b,
+			  spe_r, spe_g, spe_b,
+			  emi_r, emi_g, emi_b,
+			  trans_r, trans_g, trans_b,
+			  alpha, shininess, ref_idx;
+		std::string name;
+		std::string tex_a, tex_d, tex_s;
+		int illum_model;
+	};
+	std::map<std::string, Mtl*> materials;
+
 	ObjLoader();
 	~ObjLoader();
 
 	virtual bool Load(const std::string name);
 	
-	virtual bool LoadMaterialFile(const std::string &name) { return true; }
+	virtual bool LoadMaterialFile(const std::string &name);
+	virtual void PushMaterial(const Mtl &m);
 	virtual bool CurrentMaterial(const std::string &name) { return true; }
 
 	virtual void StartGroup(const std::string &name) {}

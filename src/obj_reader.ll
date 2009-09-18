@@ -8,7 +8,7 @@
 */
 
 //#include "y.tab.h"
-#include "grammar.h"
+#include "obj-grammar.hpp"
 
 #include "token.h"
 
@@ -73,17 +73,17 @@ ALNUM ({DIGIT}|{ALPHA})
 %%
 
 static std::list<Token*> tokens;
-::Token *currtok;
+::Token *obj_currtok;
 
 int yylex()
 {
 //	cerr << "MY yylex called" << endl;
-	currtok = yylex_int_libobj();
-	if (currtok)
+	obj_currtok = yylex_int_libobj();
+	if (obj_currtok)
 	{
-//		cerr << "token: " << currtok->Code() << "       '" << currtok->Text() << "'" << endl;
-		tokens.push_back(currtok);
-		return currtok->Code();
+//		cerr << "token: " << obj_currtok->Code() << "       '" << obj_currtok->Text() << "'" << endl;
+		tokens.push_back(obj_currtok);
+		return obj_currtok->Code();
 	}
 	else
 		return 0;
