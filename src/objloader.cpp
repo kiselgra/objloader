@@ -13,6 +13,7 @@ extern Token *currtok;
 extern ObjLoader *yyobj;
 
 ObjLoader::ObjLoader()
+: verts_read(0), norms_read(0), texs_read(0)
 {
 }
 

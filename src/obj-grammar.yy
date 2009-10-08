@@ -52,6 +52,22 @@ static int pop_int()
 	return i;
 }
 
+void handle_vidx(int &idx)	// verts_read = 5 (=bis inkl. 5 sind gültige werte da), -1 +1 ->  -1 verweist auf 5, der letzte gültige vertex
+{
+	if (idx < 0)
+		idx = yyobj->verts_read + idx + 1;
+}
+void handle_nidx(int &idx)
+{
+	if (idx < 0)
+		idx = yyobj->norms_read + idx + 1;
+}
+void handle_tidx(int &idx)
+{
+	if (idx < 0)
+		idx = yyobj->texs_read + idx + 1;
+}
+
 static std::string last_name;
 
 // #define YACC_DEBUG_OUT
@@ -100,23 +116,23 @@ face_nodes:
 	;
 
 face_node:
-	index '/' index '/' index 			{ int v=pop_int(), t=pop_int(), n=pop_int();	dbg("face_node  x/y/z");	yyobj->AddFaceNode(ObjLoader::VTN, v,t,n);	}
-	| index '/' '/' index		 		{ int v=pop_int(), n=pop_int();					dbg("face_node  x//z");		yyobj->AddFaceNode(ObjLoader::VN, v,n);	}
-	| index '/' index 					{ int v=pop_int(), t=pop_int();					dbg("face_node  x/y");		yyobj->AddFaceNode(ObjLoader::VT, v,t);	}
-	| index								{ int v=pop_int();								dbg("face_node  x");		yyobj->AddFaceNode(ObjLoader::V, v);	}
+	index '/' index '/' index 			{ int v=pop_int(), t=pop_int(), n=pop_int();	handle_vidx(v);	handle_tidx(t); handle_nidx(n);	dbg("face_node  x/y/z");	yyobj->AddFaceNode(ObjLoader::VTN, v,t,n);	}
+	| index '/' '/' index		 		{ int v=pop_int(), n=pop_int();					handle_vidx(v);	handle_nidx(n);					dbg("face_node  x//z");		yyobj->AddFaceNode(ObjLoader::VN, v,n);	}
+	| index '/' index 					{ int v=pop_int(), t=pop_int();					handle_vidx(v);	handle_tidx(t);					dbg("face_node  x/y");		yyobj->AddFaceNode(ObjLoader::VT, v,t);	}
+	| index								{ int v=pop_int();								handle_vidx(v);									dbg("face_node  x");		yyobj->AddFaceNode(ObjLoader::V, v);	}
 	;
 
 normal:
-	TKNORMAL floating floating floating { float x=pop_float(), y=pop_float(), z=pop_float();	dbg("got normal"); 	yyobj->AddNormal(x,y,z);	}
+	TKNORMAL floating floating floating { float x=pop_float(), y=pop_float(), z=pop_float();	dbg("got normal"); 	yyobj->norms_read++;	yyobj->AddNormal(x,y,z);	}
 	;
 
 texcoord:
-	TKTEX floating floating				{ float u=pop_float(), v=pop_float();					dbg("got texcoord 2"); 	yyobj->AddTexCoord(u,v);	}
-	| TKTEX floating floating floating	{ float u=pop_float(), v=pop_float(), w = pop_float();	dbg("got texcoord 3"); 	yyobj->AddTexCoord(u,v,w);		}
+	TKTEX floating floating				{ float u=pop_float(), v=pop_float();					dbg("got texcoord 2"); 	yyobj->texs_read++;	yyobj->AddTexCoord(u,v);	}
+	| TKTEX floating floating floating	{ float u=pop_float(), v=pop_float(), w = pop_float();	dbg("got texcoord 3"); 	yyobj->texs_read++;	yyobj->AddTexCoord(u,v,w);		}
 	;
 
 vertex:
-	TKVERTEX floating floating floating	{ float x=pop_float(), y=pop_float(), z=pop_float(); 	dbg("got vertex"); yyobj->AddVertex(x, y, z); }
+	TKVERTEX floating floating floating	{ float x=pop_float(), y=pop_float(), z=pop_float(); 	dbg("got vertex"); yyobj->verts_read++;		yyobj->AddVertex(x, y, z); }
 	;
 
 usemtl:

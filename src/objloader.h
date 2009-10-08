@@ -65,6 +65,8 @@ public:
 	virtual void FaceDone()													 = 0;
 
 	int CurrentLine();
+
+	int verts_read, norms_read, texs_read;
 };
 
 
