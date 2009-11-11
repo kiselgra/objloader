@@ -37,3 +37,4 @@ library_include_HEADERS = objloader.h
 
 MAINTAINERCLEANFILES = $(bison_output_files) $(flex_output_files)
 
+EXTRA_DIST = mtl-grammar.yy mtl_reader.ll obj-grammar.yy obj_reader.ll
