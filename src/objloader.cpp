@@ -26,7 +26,7 @@
 
 using namespace std;
 
-extern Token *currtok;
+extern Token *obj_currtok;
 extern ObjLoader *yyobj;
 
 ObjLoader::ObjLoader()
@@ -62,7 +62,7 @@ bool ObjLoader::Load(const std::string name)
 	
 int ObjLoader::CurrentLine() 
 { 
-	return currtok ? currtok->Line() : -1; 
+	return obj_currtok ? obj_currtok->Line() : -1; 
 }
 	
 bool ObjLoader::LoadMaterialFile(const std::string &name)
