@@ -56,6 +56,7 @@ WHITE_SPACE [\n\r\ \t\b\012]
 DIGIT [0-9]
 ALPHA [a-zA-Z_().]
 ALNUM ({DIGIT}|{ALPHA})
+ALLTHE3DSMAXSHIT [-a-zA-Z_0-9./]
 
 %s COMMENT
 
@@ -81,13 +82,16 @@ ALNUM ({DIGIT}|{ALPHA})
 <INITIAL>map_Ka				{	OUT("map_Ka");	return newtoken(TK_MAP_KA);	}
 <INITIAL>map_Kd				{	OUT("map_Kd");	return newtoken(TK_MAP_KD);	}
 <INITIAL>map_Ks				{	OUT("map_Ks");	return newtoken(TK_MAP_KS);	}
+<INITIAL>map_bump			{	OUT("map_bump");return newtoken(TK_MAP_BUMP);	}
+<INITIAL>map_d				{	OUT("map_d");	return newtoken(TK_MAP_D);	}
+<INITIAL>bump				{	OUT("map_bump");return newtoken(TK_MAP_BUMP);	}
 <INITIAL>Ns					{	OUT("Ns");		return newtoken(TK_NS);	}
 <INITIAL>Ni					{	OUT("Ni");		return newtoken(TK_REF_IDX);	}
 <INITIAL>Tf					{	OUT("Tf");		return newtoken(TK_TF);	}
 
 
-<INITIAL>{ALPHA}{ALNUM}*					{	OUT("identifier");				return new Token(TK_IDENTIFIER, yytext, yylineno); }
-<INITIAL>[-0-9a-zA-Z_./]*					{	OUT("filename");				return new Token(TK_FILENAME, yytext, yylineno); }
+<INITIAL>{ALLTHE3DSMAXSHIT}*{ALPHA}{ALLTHE3DSMAXSHIT}*	{	OUT("identifier");				return new Token(TK_IDENTIFIER, yytext, yylineno); }
+ /*<INITIAL>[-0-9a-zA-Z_./]*								{	OUT("filename");				return new Token(TK_FILENAME, yytext, yylineno); }*/
 
 <INITIAL>.									{ 	OUT("char");					return new Token(yytext[0], yytext, yylineno);}
 

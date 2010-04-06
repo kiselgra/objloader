@@ -54,6 +54,7 @@ WHITE_SPACE [\n\r\ \t\b\012]
 DIGIT [0-9]
 ALPHA [a-zA-Z_().]
 ALNUM ({DIGIT}|{ALPHA})
+ALLTHE3DSMAXSHIT [-a-zA-Z_0-9./]
 
 %s COMMENT
 
@@ -79,7 +80,8 @@ ALNUM ({DIGIT}|{ALPHA})
 <INITIAL>o									{	OUT("g");						return new Token(TKONAME, yytext, yylineno); }
 <INITIAL>s									{	OUT("s");						return new Token(TKSNAME, yytext, yylineno); }
 
-<INITIAL>{ALPHA}{ALNUM}*					{	OUT("identifier");				return new Token(TKIDENTIFIER, yytext, yylineno); }
+<INITIAL>{ALLTHE3DSMAXSHIT}*{ALPHA}{ALLTHE3DSMAXSHIT}*	{	OUT("identifier");				return new Token(TKIDENTIFIER, yytext, yylineno); }
+ /*<INITIAL>{ALPHA}{ALNUM}*					{	OUT("identifier");				return new Token(TKIDENTIFIER, yytext, yylineno); }*/
 
 <INITIAL>.									{ 	OUT("char");					return new Token(yytext[0], yytext, yylineno);}
 

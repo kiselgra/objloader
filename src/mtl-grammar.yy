@@ -29,6 +29,8 @@
 %token TK_MAP_KA
 %token TK_MAP_KD
 %token TK_MAP_KS
+%token TK_MAP_D
+%token TK_MAP_BUMP
 %token TK_IDENTIFIER
 %token TK_FILENAME
 
@@ -141,6 +143,8 @@ decl:
 	| TK_MAP_KA	filename				{ std::string s = last_name; temp_mat.tex_a = s;	}
 	| TK_MAP_KD	filename				{ std::string s = last_name; temp_mat.tex_d = s;	}
 	| TK_MAP_KS	filename				{ std::string s = last_name; temp_mat.tex_s = s;	}
+	| TK_MAP_BUMP filename				{ std::string s = last_name; temp_mat.tex_s = s;	}
+	| TK_MAP_D filename					{ std::string s = last_name; temp_mat.tex_s = s;	}
 	;
 
 
@@ -157,7 +161,8 @@ name:
 	;
 
 filename:
-	TK_FILENAME							{ last_name = mtl_currtok->Text(); }
+	/*TK_FILENAME							{ last_name = mtl_currtok->Text(); }*/
+	TK_IDENTIFIER							{ last_name = mtl_currtok->Text(); }
 	;
 
 

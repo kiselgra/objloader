@@ -32,6 +32,7 @@ extern ObjLoader *yyobj;
 ObjLoader::ObjLoader()
 : verts_read(0), norms_read(0), texs_read(0)
 {
+	cout << "OBJ BASE CTR" << endl;
 }
 
 ObjLoader::~ObjLoader()
@@ -40,6 +41,7 @@ ObjLoader::~ObjLoader()
 
 bool ObjLoader::Load(const std::string name)
 {
+	cout << "OBJ LOAD FILE " << name << endl;
 	obj_filename = name;
 
 	if (name != "")
@@ -56,8 +58,6 @@ bool ObjLoader::Load(const std::string name)
 
 	libobjparse();
 
-	for (map<string,Mtl*>::iterator it = materials.begin(); it != materials.end(); ++it)
-		cout << it->second->name << endl;
 }
 	
 int ObjLoader::CurrentLine() 
@@ -67,6 +67,7 @@ int ObjLoader::CurrentLine()
 	
 bool ObjLoader::LoadMaterialFile(const std::string &name)
 {
+	cout << "OBJ LOAD MTL" << endl;
 	string filename = name;
 	int pos = obj_filename.find_last_of("/");
 	if (pos != string::npos)
