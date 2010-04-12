@@ -99,6 +99,7 @@ static void rest_mat()
 	temp_mat.name = "";
 	temp_mat.tex_a = ""; 	temp_mat.tex_d = ""; 	temp_mat.tex_s = "";
 	temp_mat.illum_model = 0;
+	temp_mat.tex_bump = "";
 }
 
 %}
@@ -143,8 +144,8 @@ decl:
 	| TK_MAP_KA	filename				{ std::string s = last_name; temp_mat.tex_a = s;	}
 	| TK_MAP_KD	filename				{ std::string s = last_name; temp_mat.tex_d = s;	}
 	| TK_MAP_KS	filename				{ std::string s = last_name; temp_mat.tex_s = s;	}
-	| TK_MAP_BUMP filename				{ std::string s = last_name; temp_mat.tex_s = s;	}
-	| TK_MAP_D filename					{ std::string s = last_name; temp_mat.tex_s = s;	}
+	| TK_MAP_BUMP filename				{ std::string s = last_name; temp_mat.tex_bump = s;	}
+	| TK_MAP_D filename					{ std::string s = last_name; /*temp_mat.tex_D = s;*/	}
 	;
 
 
