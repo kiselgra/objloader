@@ -97,12 +97,21 @@ static std::list<Token*> tokens;
 int yylex()
 {
 //	cerr << "MY yylex called" << endl;
+	/* new */
+	static ::Token *old_tok = 0;
+	delete old_tok;
+	old_tok = obj_currtok;
+	/* --- */
 	obj_currtok = yylex_int_libobj();
 	if (obj_currtok)
 	{
 //		cerr << "token: " << obj_currtok->Code() << "       '" << obj_currtok->Text() << "'" << endl;
+		/* old
 		tokens.push_back(obj_currtok);
 		return obj_currtok->Code();
+		*/
+		int code = obj_currtok->Code();
+		return code;
 	}
 	else
 		return 0;
