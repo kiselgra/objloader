@@ -55,6 +55,7 @@ DIGIT [0-9]
 ALPHA [a-zA-Z_().]
 ALNUM ({DIGIT}|{ALPHA})
 ALLTHE3DSMAXSHIT [-a-zA-Z_0-9./]
+PM [+-]
 
 %s COMMENT
 
@@ -68,7 +69,8 @@ ALLTHE3DSMAXSHIT [-a-zA-Z_0-9./]
 <COMMENT>\n									{	BEGIN(INITIAL); }
 <COMMENT>.*									{	OUT("comment: " << yytext); }
 
-<INITIAL>"-"?{DIGIT}+("."{DIGIT}*("e""-"?{DIGIT}+)?)?			{	OUT("number: " << yytext);		return new Token(TKNUMBER, yytext, yylineno);	}
+<INITIAL>"-"?{DIGIT}+("."{DIGIT}*("e"{PM}?{DIGIT}+)?)?			{	OUT("number: " << yytext);		return new Token(TKNUMBER, yytext, yylineno);	}
+<INITIAL>"-"?{DIGIT}+"e"{PM}?{DIGIT}+							{	OUT("number: " << yytext);		return new Token(TKNUMBER, yytext, yylineno);	}
 <INITIAL>vt									{ 	OUT("texcoord");				return new Token(TKTEX, yytext, yylineno);	}
 <INITIAL>vn									{ 	OUT("normal");					return new Token(TKNORMAL, yytext, yylineno);	}
 <INITIAL>v									{ 	OUT("vertex");					return new Token(TKVERTEX, yytext, yylineno);	}
