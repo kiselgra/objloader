@@ -32,7 +32,6 @@ extern ObjLoader *yyobj;
 ObjLoader::ObjLoader()
 : verts_read(0), norms_read(0), texs_read(0)
 {
-	cout << "OBJ BASE CTR" << endl;
 }
 
 ObjLoader::~ObjLoader()
@@ -41,7 +40,6 @@ ObjLoader::~ObjLoader()
 
 bool ObjLoader::Load(const std::string name)
 {
-	cout << "OBJ LOAD FILE " << name << endl;
 	obj_filename = name;
 
 	if (name != "")
