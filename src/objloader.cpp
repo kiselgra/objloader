@@ -65,7 +65,6 @@ int ObjLoader::CurrentLine()
 	
 bool ObjLoader::LoadMaterialFile(const std::string &name)
 {
-	cout << "OBJ LOAD MTL" << endl;
 	string filename = name;
 	int pos = obj_filename.find_last_of("/");
 	if (pos != string::npos)
