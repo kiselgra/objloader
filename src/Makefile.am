@@ -3,6 +3,7 @@ lib_LTLIBRARIES = libobjloader.la
 libobjloader_la_SOURCES = obj-grammar.cpp obj-grammar.hpp \
 						  mtl-grammar.cpp mtl-grammar.hpp \
 						  lexer.h  \
+						  default.cpp default.h \
 						  obj_reader.cpp \
 						  mtl_reader.cpp \
 						  objloader.cpp  objloader.h  \
@@ -29,11 +30,12 @@ flex_output_files = obj_reader.cpp mtl_reader.cpp
 
 
 # AM_CPPFLAGS = -Isrc/
+AM_CPPFLAGS = -D WITH_DEFAULT_IMPLEMENTATION
 AM_YFLAGS = -d -plibobj
 AM_LFLAGS = -Plibobj -o lex.yy.c
 
 library_includedir = $(includedir)/$(PACKAGE)-$(VERSION)
-library_include_HEADERS = objloader.h
+library_include_HEADERS = objloader.h default.h
 
 MAINTAINERCLEANFILES = $(bison_output_files) $(flex_output_files)
 
