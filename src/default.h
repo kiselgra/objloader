@@ -57,6 +57,8 @@ namespace obj_default
 		
 		bool CurrentMaterial(const std::string &name);
 		void StartGroup(const std::string &name);
+
+		static const int NOT_PRESENT = -2;
 	};
 
 }
