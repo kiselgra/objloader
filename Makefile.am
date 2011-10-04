@@ -5,3 +5,4 @@ SUBDIRS = src doc lib-config-src test
 doc:
 	cd doc; make doc
 
+EXTRA_DIST=libobjloader.pc

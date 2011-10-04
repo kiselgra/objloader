@@ -1,0 +1,11 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: libobjloader
+Description: Wavefront Obj file loader using bison/flex.
+Version: @VERSION@
+Libs: -L${libdir} -lobjloader
+Cflags: -I${includedir}/libobjloader-@VERSION@
+
