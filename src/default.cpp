@@ -54,9 +54,9 @@ namespace obj_default
 		
 	void ObjFileLoader::AddFaceNode(int vertex, int texcoord, int normal)
 	{
-		if (curr_face_node == 3)
+		if (curr_face_node == 4)
 		{
-			cerr << "Only triangle meshes supported!" << endl;
+			cerr << "Only triangle and quad meshes supported!" << endl;
 			return;
 		}
 
@@ -93,6 +93,11 @@ namespace obj_default
 		groups.back().load_idxs_v.push_back(lib3dmath::vec3i(face_nodes[0].x-1, face_nodes[1].x-1, face_nodes[2].x-1));
 		groups.back().load_idxs_t.push_back(lib3dmath::vec3i(face_nodes[0].y-1, face_nodes[1].y-1, face_nodes[2].y-1));
 		groups.back().load_idxs_n.push_back(lib3dmath::vec3i(face_nodes[0].z-1, face_nodes[1].z-1, face_nodes[2].z-1));
+		if (curr_face_node == 4) { // add second triangle, for quads
+			groups.back().load_idxs_v.push_back(lib3dmath::vec3i(face_nodes[2].x-1, face_nodes[3].x-1, face_nodes[0].x-1));
+			groups.back().load_idxs_t.push_back(lib3dmath::vec3i(face_nodes[2].y-1, face_nodes[3].y-1, face_nodes[0].y-1));
+			groups.back().load_idxs_n.push_back(lib3dmath::vec3i(face_nodes[2].z-1, face_nodes[3].z-1, face_nodes[0].z-1));
+		}
 		curr_face_node = 0;
 
 	}

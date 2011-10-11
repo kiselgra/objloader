@@ -30,7 +30,7 @@ namespace obj_default
 		std::vector<lib3dmath::vec3f> 	load_texs;
 		std::list<Group>	groups;
 		int curr_face_node;
-		lib3dmath::vec3i face_nodes[3];
+		lib3dmath::vec3i face_nodes[4];
 
 		Mtl *curr_mtl;
 
