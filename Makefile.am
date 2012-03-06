@@ -1,5 +1,5 @@
 
-SUBDIRS = src doc lib-config-src test
+SUBDIRS = src doc # lib-config-src test
 
 .PHONY: doc
 doc:
