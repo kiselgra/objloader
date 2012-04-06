@@ -42,3 +42,11 @@ library_include_HEADERS = objloader.h default.h
 MAINTAINERCLEANFILES = $(bison_output_files) $(flex_output_files)
 
 EXTRA_DIST = mtl-grammar.yy mtl_reader.ll obj-grammar.yy obj_reader.ll
+
+library_nonversioned_includedir = $(includedir)/$(PACKAGE)
+
+install-data-hook:
+	@test -L $(library_nonversioned_includedir) && echo "   !!!   The nonversioned library include dir <$(library_nonversioned_includedir)> is already covered by a link. You'll have to update yourself". || true
+	test -L $(library_nonversioned_includedir) || ln -s $(library_includedir) $(library_nonversioned_includedir)
+
+
