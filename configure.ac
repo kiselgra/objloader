@@ -58,4 +58,9 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memset])
 
+## http://stackoverflow.com/questions/5298830/how-to-include-m4-files-in-autoconf
+AC_CONFIG_MACRO_DIR([.])
+AC_LANG([C++])
+AX_CXX_COMPILE_STDCXX_11
+
 AC_OUTPUT

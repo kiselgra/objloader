@@ -58,6 +58,11 @@ namespace obj_default
 		bool CurrentMaterial(const std::string &name);
 		void StartGroup(const std::string &name);
 
+		/*! the v/t/n specification found in some obj files is not generally in gl-compatible n/n/n but the most compact n/m/o form.
+		 *  this function is called `infalte' because it does restore the gl-compatible layout.
+		 */
+		void Inflate();
+
 		static const int NOT_PRESENT = -2;
 	};
 

@@ -129,6 +129,16 @@ namespace obj_default
 		groups.back().mat = curr_mtl;
 	}
 
+	void ObjFileLoader::Inflate()
+	{
+		// sort groups by material
+		// generate clear vtn buffers
+		// go over all groups
+		//   go over all referenced indices
+		//     check if vtn-index combination has an index already
+		//     use it, or generate a new vtn entry
+	}
+
 }
 
 /* vim: set foldmethod=marker: */
