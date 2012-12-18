@@ -58,6 +58,17 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memset])
 
+AC_ARG_ENABLE(gdb,
+			[AS_HELP_STRING([--enable-gdb], [Wether to use debugging flags. Default: no.])],
+			with_debug_flags="$enableval", with_debug_flags="no")
+if test "x$with_debug_flags" == "xyes" ; then
+	DEBUG_FLAGS="-ggdb3 -O0"
+else
+	DEBUG_FLAGS=""
+fi
+CFLAGS="$CFLAGS $DEBUG_FLAGS"
+CXXFLAGS="$CXXFLAGS $DEBUG_FLAGS"
+
 ## http://stackoverflow.com/questions/5298830/how-to-include-m4-files-in-autoconf
 AC_CONFIG_MACRO_DIR([.])
 AC_LANG([C++])
