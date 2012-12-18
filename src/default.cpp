@@ -171,7 +171,8 @@ namespace obj_default
 			else                 nt.push_back(lib3dmath::vec3f(0,0,0));
 			if (on.size() > t.n) nn.push_back(on[t.n]);
 			else                 nn.push_back(lib3dmath::vec3f(0,0,0));
-			umap[t] = counter++;
+			umap[t] = counter;
+			return counter++;
 		}
 		else
 			return umap[t];
@@ -206,7 +207,6 @@ namespace obj_default
 				auto load_idxs_t = g->load_idxs_t.begin();
 				auto load_idxs_n = g->load_idxs_n.begin();
 				while (load_idxs_v != g->load_idxs_v.end()) {
-					load_idxs_v++;
 					vec3i v = *load_idxs_v;
 					vec3i t = (load_idxs_t != g->load_idxs_t.end()) ? *load_idxs_t : null;
 					vec3i n = (load_idxs_n != g->load_idxs_n.end()) ? *load_idxs_n : null;
@@ -222,6 +222,7 @@ namespace obj_default
 					new_idx_t.push_back(vec3i(new_index_a, new_index_b, new_index_c));
 					new_idx_n.push_back(vec3i(new_index_a, new_index_b, new_index_c));
 					// create new index data
+					load_idxs_v++;
 					if (load_idxs_t != g->load_idxs_t.end()) load_idxs_t++;
 					if (load_idxs_n != g->load_idxs_n.end()) load_idxs_n++;
 				}
