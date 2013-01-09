@@ -58,6 +58,7 @@ ALLTHE3DSMAXSHIT [-a-zA-Z_0-9./]
 PM [+-]
 
 %s COMMENT
+%s EATIT
 
 
 %%
@@ -69,20 +70,26 @@ PM [+-]
 <COMMENT>\n									{	BEGIN(INITIAL); }
 <COMMENT>.*									{	OUT("comment: " << yytext); }
 
+<EATIT>[\t ]								{	OUT("ign :" << yytext << ":");/* ignore */ }
+<EATIT>\r									{	OUT("ign :" << yytext << ":");/* ignore */ }
+<EATIT>[^\t \n][^\n\r]*						{	OUT("identifier"); BEGIN(INITIAL); return new Token(TKIDENTIFIER, yytext, yylineno); }
+<EATIT>\n									{	OUT("empty identifier"); BEGIN(INITIAL); return new Token(TKIDENTIFIER, "", yylineno); }
+<EATIT>.									{ cout << "FUCK :" << yytext << ":" << endl; exit(0);}
+
 <INITIAL>"-"?{DIGIT}+("."{DIGIT}*("e"{PM}?{DIGIT}+)?)?			{	OUT("number: " << yytext);		return new Token(TKNUMBER, yytext, yylineno);	}
 <INITIAL>"-"?{DIGIT}+"e"{PM}?{DIGIT}+							{	OUT("number: " << yytext);		return new Token(TKNUMBER, yytext, yylineno);	}
-<INITIAL>vt									{ 	OUT("texcoord");				return new Token(TKTEX, yytext, yylineno);	}
-<INITIAL>vn									{ 	OUT("normal");					return new Token(TKNORMAL, yytext, yylineno);	}
-<INITIAL>v									{ 	OUT("vertex");					return new Token(TKVERTEX, yytext, yylineno);	}
-<INITIAL>f									{ 	OUT("face");					return new Token(TKFACE, yytext, yylineno);	}
-<INITIAL>"/"								{	OUT("/");						return new Token('/', yytext, yylineno);		}
-<INITIAL>"usemtl"							{	OUT("usemtl");					return new Token(TKUMTL, yytext, yylineno);	}
-<INITIAL>"mtllib"							{	OUT("mtllib");					return new Token(TKMTLL, yytext, yylineno);	}
-<INITIAL>g									{	OUT("g");						return new Token(TKGRP, yytext, yylineno); }
-<INITIAL>o									{	OUT("g");						return new Token(TKONAME, yytext, yylineno); }
-<INITIAL>s									{	OUT("s");						return new Token(TKSNAME, yytext, yylineno); }
+<INITIAL>vt									{ 	OUT("texcoord");					return new Token(TKTEX, yytext, yylineno);	}
+<INITIAL>vn									{ 	OUT("normal");						return new Token(TKNORMAL, yytext, yylineno);	}
+<INITIAL>v									{ 	OUT("vertex");						return new Token(TKVERTEX, yytext, yylineno);	}
+<INITIAL>f									{ 	OUT("face");						return new Token(TKFACE, yytext, yylineno);	}
+<INITIAL>"/"								{	OUT("/");							return new Token('/', yytext, yylineno);		}
+<INITIAL>"usemtl"							{	OUT("usemtl");		BEGIN(EATIT); 	return new Token(TKUMTL, yytext, yylineno);	}
+<INITIAL>"mtllib"							{	OUT("mtllib");		BEGIN(EATIT); 	return new Token(TKMTLL, yytext, yylineno);	}
+<INITIAL>g									{	OUT("g");			BEGIN(EATIT); 	return new Token(TKGRP, yytext, yylineno); }
+<INITIAL>o									{	OUT("g");			BEGIN(EATIT); 	return new Token(TKONAME, yytext, yylineno); }
+<INITIAL>s									{	OUT("s");			BEGIN(EATIT); 	return new Token(TKSNAME, yytext, yylineno); }
 
-<INITIAL>{ALLTHE3DSMAXSHIT}*{ALPHA}{ALLTHE3DSMAXSHIT}*	{	OUT("identifier");				return new Token(TKIDENTIFIER, yytext, yylineno); }
+ /*<INITIAL>{ALLTHE3DSMAXSHIT}*{ALPHA}{ALLTHE3DSMAXSHIT}*	{	OUT("identifier");				return new Token(TKIDENTIFIER, yytext, yylineno); }*/
  /*<INITIAL>{ALPHA}{ALNUM}*					{	OUT("identifier");				return new Token(TKIDENTIFIER, yytext, yylineno); }*/
 
 <INITIAL>.									{ 	OUT("char");					return new Token(yytext[0], yytext, yylineno);}

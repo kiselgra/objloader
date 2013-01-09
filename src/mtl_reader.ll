@@ -59,6 +59,7 @@ ALNUM ({DIGIT}|{ALPHA})
 ALLTHE3DSMAXSHIT [-a-zA-Z_0-9./]
 
 %s COMMENT
+%s EATIT
 
 
 %%
@@ -70,21 +71,26 @@ ALLTHE3DSMAXSHIT [-a-zA-Z_0-9./]
 <COMMENT>\n									{	BEGIN(INITIAL); }
 <COMMENT>.*									{	OUT("comment: " << yytext); }
 
+<EATIT>[\t ]								{	/* ignore */ }
+<EATIT>\r									{	/* ignore */ }
+<EATIT>[^\t \n][^\n\r]*						{	OUT("identifier"); BEGIN(INITIAL); return new Token(TK_IDENTIFIER, yytext, yylineno); }
+<EATIT>\n									{	OUT("empty identifier"); BEGIN(INITIAL); return new Token(TK_IDENTIFIER, "", yylineno); }
+
 <INITIAL>"-"?{DIGIT}+("."{DIGIT}*("e""-"?{DIGIT}+)?)?			{	OUT("number: " << yytext);		return new Token(TK_NUMBER, yytext, yylineno);	}
 
-<INITIAL>newmtl				{	OUT("newmtl");	return newtoken(TK_NEW_MAT);	}
+<INITIAL>newmtl				{	OUT("newmtl");	BEGIN(EATIT);	return newtoken(TK_NEW_MAT);	}
 <INITIAL>Ka					{	OUT("Ka");		return newtoken(TK_KA);	}
 <INITIAL>Kd					{	OUT("Kd");		return newtoken(TK_KD);	}
 <INITIAL>Ks					{	OUT("Ks");		return newtoken(TK_KS);	}
 <INITIAL>Ke					{	OUT("Ke");		return newtoken(TK_KE);	}	
 <INITIAL>(d|Tr)				{	OUT("alpha");	return newtoken(TK_ALPHA);	}
 <INITIAL>illum				{	OUT("illum");	return newtoken(TK_ILLUM);	}
-<INITIAL>map_Ka				{	OUT("map_Ka");	return newtoken(TK_MAP_KA);	}
-<INITIAL>map_Kd				{	OUT("map_Kd");	return newtoken(TK_MAP_KD);	}
-<INITIAL>map_Ks				{	OUT("map_Ks");	return newtoken(TK_MAP_KS);	}
-<INITIAL>map_bump			{	OUT("map_bump");return newtoken(TK_MAP_BUMP);	}
-<INITIAL>map_d				{	OUT("map_d");	return newtoken(TK_MAP_D);	}
-<INITIAL>bump				{	OUT("map_bump");return newtoken(TK_MAP_BUMP);	}
+<INITIAL>map_Ka				{	OUT("map_Ka");	BEGIN(EATIT);	return newtoken(TK_MAP_KA);	}
+<INITIAL>map_Kd				{	OUT("map_Kd");	BEGIN(EATIT);	return newtoken(TK_MAP_KD);	}
+<INITIAL>map_Ks				{	OUT("map_Ks");	BEGIN(EATIT);	return newtoken(TK_MAP_KS);	}
+<INITIAL>map_bump			{	OUT("map_bump");BEGIN(EATIT);	return newtoken(TK_MAP_BUMP);	}
+<INITIAL>map_d				{	OUT("map_d");	BEGIN(EATIT);	return newtoken(TK_MAP_D);	}
+<INITIAL>bump				{	OUT("map_bump");BEGIN(EATIT);	return newtoken(TK_MAP_BUMP);	}
 <INITIAL>Ns					{	OUT("Ns");		return newtoken(TK_NS);	}
 <INITIAL>Ni					{	OUT("Ni");		return newtoken(TK_REF_IDX);	}
 <INITIAL>Tf					{	OUT("Tf");		return newtoken(TK_TF);	}
