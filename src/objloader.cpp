@@ -57,7 +57,7 @@ bool ObjLoader::Load(const std::string name)
 	libobjparse();
 
 }
-	
+
 int ObjLoader::CurrentLine() 
 { 
 	return obj_currtok ? obj_currtok->Line() : -1; 

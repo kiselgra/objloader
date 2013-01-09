@@ -56,6 +56,7 @@ namespace obj_default
 		void FaceDone();
 		
 		bool CurrentMaterial(const std::string &name);
+		void PushMaterial(const Mtl &m);
 		void StartGroup(const std::string &name);
 
 		/*! the v/t/n specification found in some obj files is not generally in gl-compatible n/n/n but the most compact n/m/o form.

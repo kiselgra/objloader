@@ -6,6 +6,9 @@
 #include <list>
 #include <unordered_map>
 
+#include <cstring>
+#include <libgen.h>	// basename
+
 using namespace std;
 		
 namespace obj_default {
@@ -152,6 +155,30 @@ namespace obj_default
 		groups.back().mat = curr_mtl;
 
 		return true;
+	}
+
+	void fix_filename(std::string &str) 
+	{
+		if (str != "")
+		{
+			char *tmp = strdup(str.c_str());
+			char *base = basename(tmp);
+			string old = str;
+			str = base;
+			free(tmp);
+			if (old != str)
+				cerr << "had to convert strange filename '" << old << "' to simple filename '" << str << "'" << endl;
+		}
+	}
+
+	void ObjFileLoader::PushMaterial(const Mtl &m)
+	{
+		Mtl newm = m;
+		fix_filename(newm.tex_a);
+		fix_filename(newm.tex_d);
+		fix_filename(newm.tex_s);
+		fix_filename(newm.tex_bump);
+		ObjLoader::PushMaterial(newm);
 	}
 
 	void ObjFileLoader::StartGroup(const std::string &name)
