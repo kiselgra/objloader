@@ -147,12 +147,20 @@ namespace obj_default
 
 		if (groups.back().load_idxs_v.size() || groups.back().load_idxs_t.size() || groups.back().load_idxs_n.size())
 		{
-			cerr << "cannot set material of a group after the first face is read." << endl;
-			return false;
+			cout << "Warning: change of material inside of group." << endl;
+			if (groups.back().mat_set_explicitly) {
+				cout << "Making new group." << endl;
+				StartGroup(groups.back().name + ":" + name + "*");
+				CurrentMaterial(name);
+				return true;
+			}
+			else
+				cout << "Changing material of current group (because it was not set explicitly, yet." << endl;
 		}
 
 		curr_mtl = it->second;
 		groups.back().mat = curr_mtl;
+		groups.back().mat_set_explicitly = true;
 
 		return true;
 	}
@@ -187,6 +195,7 @@ namespace obj_default
 			groups.push_back(Group());
 		groups.back().name = name;
 		groups.back().mat = curr_mtl;
+		groups.back().mat_set_explicitly = false;
 	}
 
 	uint32_t add_vtn(unordered_map<triplet, uint32_t> &umap, const triplet &t, uint32_t &counter, 

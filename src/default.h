@@ -21,6 +21,7 @@ namespace obj_default
 			std::vector<lib3dmath::vec3i> load_idxs_n;
 			std::vector<lib3dmath::vec3i> load_idxs_t;
 			Mtl *mat;
+			bool mat_set_explicitly;
 		};
 		enum FakeMode { FAKE };
 
