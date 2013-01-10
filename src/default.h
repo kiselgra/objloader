@@ -63,6 +63,8 @@ namespace obj_default
 		 *  this function is called `infalte' because it does restore the gl-compatible layout.
 		 */
 		void Inflate();
+		std::map<Mtl*, std::list<Group*> > groups_by_material;
+		void CollapseMaterials();
 
 		static const int NOT_PRESENT = -2;
 	};

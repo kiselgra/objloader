@@ -211,7 +211,7 @@ namespace obj_default
 		typedef lib3dmath::vec3i vec3i;
 
 		// sort groups by material
-		map<Mtl*, list<Group*> > groups_by_material;
+		std::map<Mtl*, std::list<Group*> > groups_by_material;
 		for (auto &g : groups)
 			groups_by_material[g.mat].push_back(&g);
 
@@ -263,6 +263,38 @@ namespace obj_default
 		load_verts.swap(new_v);
 		load_texs.swap(new_t);
 		load_norms.swap(new_n);
+	}
+
+	void ObjFileLoader::CollapseMaterials()
+	{
+		std::map<Mtl*, std::list<Group*> > groups_by_material;
+		for (auto &g : groups)
+			groups_by_material[g.mat].push_back(&g);
+
+		for (auto &it : groups_by_material)
+			if (it.second.size() > 1) {
+				// only for collapsable lists
+				Group *base = it.second.front();
+				list<Group*>::iterator git = it.second.begin()++;
+				while (git != it.second.end()) {
+					Group *g = *git;
+					base->load_idxs_v.insert(base->load_idxs_v.end(), g->load_idxs_v.begin(), g->load_idxs_v.end());
+					base->load_idxs_n.insert(base->load_idxs_n.end(), g->load_idxs_n.begin(), g->load_idxs_n.end());
+					base->load_idxs_t.insert(base->load_idxs_t.end(), g->load_idxs_t.begin(), g->load_idxs_t.end());
+					git++;
+				}
+				base->name += "**";
+				while (it.second.size() > 1) {
+					Group *g = it.second.back();
+					for (list<Group>::iterator it = groups.begin(); it != groups.end(); ++it)
+						if (&*it == g) {
+							groups.erase(it);
+							break;
+						}
+					// delete?
+					it.second.pop_back();
+				}
+			}
 	}
 
 }
