@@ -145,7 +145,7 @@ decl:
 	| TK_MAP_KD	filename				{ std::string s = last_name; temp_mat.tex_d = s;	}
 	| TK_MAP_KS	filename				{ std::string s = last_name; temp_mat.tex_s = s;	}
 	| TK_MAP_BUMP filename				{ std::string s = last_name; temp_mat.tex_bump = s;	}
-	| TK_MAP_D filename					{ std::string s = last_name; /*temp_mat.tex_D = s;*/	}
+	| TK_MAP_D filename					{ std::string s = last_name; temp_mat.tex_alpha = s;	}
 	;
 
 

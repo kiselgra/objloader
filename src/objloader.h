@@ -52,7 +52,7 @@ public:
 			  trans_r, trans_g, trans_b,
 			  alpha, shininess, ref_idx;
 		std::string name;
-		std::string tex_a, tex_d, tex_s, tex_bump;
+		std::string tex_a, tex_d, tex_s, tex_bump, tex_alpha;
 		int illum_model;
 	};
 	std::map<std::string, Mtl*> materials;
