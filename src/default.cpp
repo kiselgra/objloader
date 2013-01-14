@@ -186,6 +186,7 @@ namespace obj_default
 		fix_filename(newm.tex_d);
 		fix_filename(newm.tex_s);
 		fix_filename(newm.tex_bump);
+		fix_filename(newm.tex_alpha);
 		ObjLoader::PushMaterial(newm);
 	}
 

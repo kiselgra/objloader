@@ -97,7 +97,7 @@ static void rest_mat()
 	temp_mat.trans_r = 0;	temp_mat.trans_g = 0;	temp_mat.trans_b = 0;	
 	temp_mat.alpha = 0;	 	temp_mat.shininess = 0;	temp_mat.ref_idx = 0;
 	temp_mat.name = "";
-	temp_mat.tex_a = ""; 	temp_mat.tex_d = ""; 	temp_mat.tex_s = "";
+	temp_mat.tex_a = ""; 	temp_mat.tex_d = ""; 	temp_mat.tex_s = "";	temp_mat.tex_bump = "";	temp_mat.tex_alpha = "";
 	temp_mat.illum_model = 0;
 	temp_mat.tex_bump = "";
 }
