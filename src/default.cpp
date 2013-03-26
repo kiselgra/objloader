@@ -167,7 +167,7 @@ namespace obj_default
 
 	void fix_filename(std::string &str) 
 	{
-		if (str != "")
+		if (str != "" && (str[0] == '/' || strstr(str.c_str(), "\\")))
 		{
 			char *tmp = strdup(str.c_str());
 			char *base = basename(tmp);
