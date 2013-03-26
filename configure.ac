@@ -18,7 +18,7 @@ AC_INIT(libobjloader, 0.0.1, BUG-REPORT-ADDRESS)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/objloader.cpp])
 AC_CONFIG_HEADER([config.h])
-AC_CONFIG_FILES(Makefile src/Makefile doc/Makefile lib-config-src/Makefile test/Makefile libobjloader.pc)
+AC_CONFIG_FILES(Makefile src/Makefile doc/Makefile test/Makefile libobjloader.pc)
 
 # Checks for programs.
 AC_PROG_CXX
