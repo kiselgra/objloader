@@ -19,6 +19,7 @@
 #define __OBJFILE_H__ 
 
 #include <string>
+#include <istream>
 #include <map>
 
 
@@ -36,6 +37,8 @@ class ObjLoader
 {
 protected:
 	std::string obj_filename;
+	bool ugly_add_face(std::istream &in);
+	void ugly_parse(std::istream &in);
 
 public:
 	enum VTN { VTN };
@@ -56,6 +59,8 @@ public:
 		int illum_model;
 	};
 	std::map<std::string, Mtl*> materials;
+	bool parse_obj_without_bision;	//!< does not affect mtl!
+	std::istream *stream;
 
 	ObjLoader();
 	~ObjLoader();
