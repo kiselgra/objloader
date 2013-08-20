@@ -314,13 +314,14 @@ namespace obj_default
 		                        bb.second.z - bb.first.z);
 	}
 
-	void ObjFileLoader::CollapseMaterials()
+	void ObjFileLoader::CollapseMaterials(float f)
 	{
 		std::map<Mtl*, std::list<Group*> > groups_by_material;
 		for (auto &g : groups)
 			groups_by_material[g.mat].push_back(&g);
 
-		bool just_paste = true;
+// 		bool just_paste = true;
+		bool just_paste = false;
 		if (just_paste) {
 			for (auto &it : groups_by_material)
 				if (it.second.size() > 1) {
@@ -349,37 +350,53 @@ namespace obj_default
 		}
 		else {
 			typedef lib3dmath::vec3f vec3f;
-			float dir_expansion = 3;
+			float dir_expansion = f;
 			// look at all clusters
 			for (auto &by_material : groups_by_material) {
+				cout << "reducing groups of material " << by_material.first->name << "..." << endl;
 				bool merged = true;
-				while (merged) {
+				while (merged && by_material.second.size() > 1) {
+					merged = false;
 					// find a group of the cluster to merge to the first group
 					Group *base = by_material.second.front();
+					cout << "    the base group is " << base->name << endl;
+					cout << "        (";
+					for (auto c : by_material.second) cout << c->name << " ";
+					cout << ")" << endl;
 					// find bb
 					bb_t base_bb = compute_bb(load_verts, base->load_idxs_v);
 					vec3f base_diam = bb_diam(base_bb);
-					list<Group*>::iterator git = by_material.second.begin()++;
+					list<Group*>::iterator git = ++by_material.second.begin();
 					while (git != by_material.second.end()) {
 						Group *g = *git;
+						cout << "    candidate: " << g->name << endl;
 						bb_t this_bb = compute_bb(load_verts, g->load_idxs_v);
 						vec3f diam = bb_diam(merge_bb(base_bb, this_bb));
 						if (diam.x < dir_expansion * base_diam.x &&
 						    diam.y < dir_expansion * base_diam.y &&
 						    diam.z < dir_expansion * base_diam.z) {
+							cout << "    merge!" << endl;
+							merged = true;
 							// if the bb's expansion is not too bad we integrate the boxes.
 							base->load_idxs_v.insert(base->load_idxs_v.end(), g->load_idxs_v.begin(), g->load_idxs_v.end());
 							base->load_idxs_n.insert(base->load_idxs_n.end(), g->load_idxs_n.begin(), g->load_idxs_n.end());
 							base->load_idxs_t.insert(base->load_idxs_t.end(), g->load_idxs_t.begin(), g->load_idxs_t.end());
-							git = groups.erase(git);}
+							// find merged-in entry in global group table and remove it.
+							for (list<Group>::iterator iit = groups.begin(); iit != groups.end(); ++iit)
+								if (&*iit == g) {
+									groups.erase(iit);
+									break;
+								}
+							// remove merged-in entry from working set.
+							git = by_material.second.erase(git);
+						}
+						else
+							git++;
 					}
-					else
-						git++;
 				}
 			}
 		}
 	}
-
 }
 
 /* vim: set foldmethod=marker: */

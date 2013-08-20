@@ -65,7 +65,7 @@ namespace obj_default
 		 */
 		void Inflate();
 		std::map<Mtl*, std::list<Group*> > groups_by_material;
-		void CollapseMaterials();
+		void CollapseMaterials(float f = 1e20);
 
 		static const int NOT_PRESENT = -2;
 	};
