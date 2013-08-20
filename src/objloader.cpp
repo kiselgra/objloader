@@ -210,7 +210,7 @@ void ObjLoader::ugly_parse(std::istream &in)
 			eat_white;
 			string rest; getline(in, rest);
 			rest = trim(rest);
-			cout << "UseMtl '" << rest << "'" << endl;
+// 			cout << "UseMtl '" << rest << "'" << endl;
 			if (!yyobj->CurrentMaterial(rest))
 				cerr << "Material '" << rest << "' is not defined." << endl;
 		}
@@ -221,14 +221,14 @@ void ObjLoader::ugly_parse(std::istream &in)
 			eat_white;
 			string rest; getline(in, rest);
 			rest = trim(rest);
-			cout << "Group '" << rest << "'" << endl;
+// 			cout << "Group '" << rest << "'" << endl;
 			yyobj->StartGroup(rest);
 		}
 		else if (command == "o") {
 			eat_white;
 			string rest; getline(in, rest);
 			rest = trim(rest);
-			cout << "Object '" << rest << "'" << endl;
+// 			cout << "Object '" << rest << "'" << endl;
 			yyobj->ObjectName(rest);
 		}
 		else if (command == "#") {

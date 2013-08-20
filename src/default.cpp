@@ -7,6 +7,7 @@
 #include <unordered_map>
 
 #include <cstring>
+#include <float.h>
 #include <libgen.h>	// basename
 
 using namespace std;
@@ -275,36 +276,108 @@ namespace obj_default
 		load_norms.swap(new_n);
 	}
 
+	typedef pair<lib3dmath::vec3f, lib3dmath::vec3f> bb_t;
+
+	bb_t compute_bb(const vector<lib3dmath::vec3f> &load_verts, const vector<lib3dmath::vec3i> load_idxs_v) {
+		lib3dmath::vec3f min(FLT_MAX, FLT_MAX, FLT_MAX), max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+		for (int i = 0; i < load_idxs_v.size(); ++i) {
+			const lib3dmath::vec3f *v = &load_verts[load_idxs_v[i].x];
+			if (v->x < min.x) min.x = v->x;  if (v->x > max.x) max.x = v->x;
+			if (v->y < min.y) min.y = v->y;  if (v->y > max.y) max.y = v->y;
+			if (v->z < min.z) min.z = v->z;  if (v->z > max.z) max.z = v->z;
+			v = &load_verts[load_idxs_v[i].y];                            
+			if (v->x < min.x) min.x = v->x;  if (v->x > max.x) max.x = v->x;
+			if (v->y < min.y) min.y = v->y;  if (v->y > max.y) max.y = v->y;
+			if (v->z < min.z) min.z = v->z;  if (v->z > max.z) max.z = v->z;
+			v = &load_verts[load_idxs_v[i].z];                            
+			if (v->x < min.x) min.x = v->x;  if (v->x > max.x) max.x = v->x;
+			if (v->y < min.y) min.y = v->y;  if (v->y > max.y) max.y = v->y;
+			if (v->z < min.z) min.z = v->z;  if (v->z > max.z) max.z = v->z;
+		}
+		return make_pair(min, max);
+	}
+
+	bb_t merge_bb(const bb_t &a, const bb_t &b) {
+		bb_t m;
+		m.first.x = min(a.first.x, b.first.x);
+		m.first.y = min(a.first.y, b.first.y);
+		m.first.z = min(a.first.z, b.first.z);
+		m.second.x = max(a.second.x, b.second.x);
+		m.second.y = max(a.second.y, b.second.y);
+		m.second.z = max(a.second.z, b.second.z);
+		return m;
+	}
+
+	lib3dmath::vec3f bb_diam(const bb_t &bb) {
+		return lib3dmath::vec3f(bb.second.x - bb.first.x,
+		                        bb.second.y - bb.first.y,
+		                        bb.second.z - bb.first.z);
+	}
+
 	void ObjFileLoader::CollapseMaterials()
 	{
 		std::map<Mtl*, std::list<Group*> > groups_by_material;
 		for (auto &g : groups)
 			groups_by_material[g.mat].push_back(&g);
 
-		for (auto &it : groups_by_material)
-			if (it.second.size() > 1) {
-				// only for collapsable lists
-				Group *base = it.second.front();
-				list<Group*>::iterator git = it.second.begin()++;
-				while (git != it.second.end()) {
-					Group *g = *git;
-					base->load_idxs_v.insert(base->load_idxs_v.end(), g->load_idxs_v.begin(), g->load_idxs_v.end());
-					base->load_idxs_n.insert(base->load_idxs_n.end(), g->load_idxs_n.begin(), g->load_idxs_n.end());
-					base->load_idxs_t.insert(base->load_idxs_t.end(), g->load_idxs_t.begin(), g->load_idxs_t.end());
-					git++;
+		bool just_paste = true;
+		if (just_paste) {
+			for (auto &it : groups_by_material)
+				if (it.second.size() > 1) {
+					// only for collapsable lists
+					Group *base = it.second.front();
+					list<Group*>::iterator git = it.second.begin()++;
+					while (git != it.second.end()) {
+						Group *g = *git;
+						base->load_idxs_v.insert(base->load_idxs_v.end(), g->load_idxs_v.begin(), g->load_idxs_v.end());
+						base->load_idxs_n.insert(base->load_idxs_n.end(), g->load_idxs_n.begin(), g->load_idxs_n.end());
+						base->load_idxs_t.insert(base->load_idxs_t.end(), g->load_idxs_t.begin(), g->load_idxs_t.end());
+						git++;
+					}
+					base->name += "**";
+					while (it.second.size() > 1) {
+						Group *g = it.second.back();
+						for (list<Group>::iterator iit = groups.begin(); iit != groups.end(); ++iit)
+							if (&*iit == g) {
+								groups.erase(iit);
+								break;
+							}
+						// delete?
+						it.second.pop_back();
+					}
 				}
-				base->name += "**";
-				while (it.second.size() > 1) {
-					Group *g = it.second.back();
-					for (list<Group>::iterator it = groups.begin(); it != groups.end(); ++it)
-						if (&*it == g) {
-							groups.erase(it);
-							break;
-						}
-					// delete?
-					it.second.pop_back();
+		}
+		else {
+			typedef lib3dmath::vec3f vec3f;
+			float dir_expansion = 3;
+			// look at all clusters
+			for (auto &by_material : groups_by_material) {
+				bool merged = true;
+				while (merged) {
+					// find a group of the cluster to merge to the first group
+					Group *base = by_material.second.front();
+					// find bb
+					bb_t base_bb = compute_bb(load_verts, base->load_idxs_v);
+					vec3f base_diam = bb_diam(base_bb);
+					list<Group*>::iterator git = by_material.second.begin()++;
+					while (git != by_material.second.end()) {
+						Group *g = *git;
+						bb_t this_bb = compute_bb(load_verts, g->load_idxs_v);
+						vec3f diam = bb_diam(merge_bb(base_bb, this_bb));
+						if (diam.x < dir_expansion * base_diam.x &&
+						    diam.y < dir_expansion * base_diam.y &&
+						    diam.z < dir_expansion * base_diam.z) {
+							// if the bb's expansion is not too bad we integrate the boxes.
+							base->load_idxs_v.insert(base->load_idxs_v.end(), g->load_idxs_v.begin(), g->load_idxs_v.end());
+							base->load_idxs_n.insert(base->load_idxs_n.end(), g->load_idxs_n.begin(), g->load_idxs_n.end());
+							base->load_idxs_t.insert(base->load_idxs_t.end(), g->load_idxs_t.begin(), g->load_idxs_t.end());
+							git = groups.erase(git);}
+					}
+					else
+						git++;
 				}
 			}
+		}
 	}
 
 }
