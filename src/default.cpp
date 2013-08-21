@@ -353,29 +353,29 @@ namespace obj_default
 			float dir_expansion = f;
 			// look at all clusters
 			for (auto &by_material : groups_by_material) {
-				cout << "reducing groups of material " << by_material.first->name << "..." << endl;
+// 				cout << "reducing groups of material " << (by_material.first ? by_material.first->name : string("(null)")) << "..." << endl;
 				bool merged = true;
 				while (merged && by_material.second.size() > 1) {
 					merged = false;
 					// find a group of the cluster to merge to the first group
 					Group *base = by_material.second.front();
-					cout << "    the base group is " << base->name << endl;
-					cout << "        (";
-					for (auto c : by_material.second) cout << c->name << " ";
-					cout << ")" << endl;
+// 					cout << "    the base group is " << base->name << endl;
+// 					cout << "        (";
+// 					for (auto c : by_material.second) cout << c->name << " ";
+// 					cout << ")" << endl;
 					// find bb
 					bb_t base_bb = compute_bb(load_verts, base->load_idxs_v);
 					vec3f base_diam = bb_diam(base_bb);
 					list<Group*>::iterator git = ++by_material.second.begin();
 					while (git != by_material.second.end()) {
 						Group *g = *git;
-						cout << "    candidate: " << g->name << endl;
+// 						cout << "    candidate: " << g->name << endl;
 						bb_t this_bb = compute_bb(load_verts, g->load_idxs_v);
 						vec3f diam = bb_diam(merge_bb(base_bb, this_bb));
 						if (diam.x < dir_expansion * base_diam.x &&
 						    diam.y < dir_expansion * base_diam.y &&
 						    diam.z < dir_expansion * base_diam.z) {
-							cout << "    merge!" << endl;
+// 							cout << "    merge!" << endl;
 							merged = true;
 							// if the bb's expansion is not too bad we integrate the boxes.
 							base->load_idxs_v.insert(base->load_idxs_v.end(), g->load_idxs_v.begin(), g->load_idxs_v.end());
