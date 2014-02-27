@@ -22,6 +22,30 @@ namespace obj_default {
 	};
 }
 
+matrix4x4f strtomat4f(const std::string &s)
+{
+	matrix4x4f m;
+	if (!s.size()) {
+		make_unit_matrix4x4f(&m);
+		return m;
+	}
+
+	const char *p = s.c_str();
+	char *n;
+	matrix4x4f mat;
+
+	mat.col_major[0+4*0] = strtod(p, &n);
+	mat.col_major[0+4*1] = strtod(n, &n);
+	mat.col_major[0+4*2] = strtod(n, &n);
+	mat.col_major[0+4*3] = strtod(n, &n);
+
+	for (int y = 1; y < 4; ++y)
+		for (int x = 0; x < 4; ++x)
+			mat.col_major[y+4*x] = strtod(n, &n);
+
+	return mat;
+}
+
 namespace std {
 	// http://stackoverflow.com/questions/7222143/unordered-map-hash-function-c, apparently from boost
 	template<typename T> inline void hash_combine(std::size_t &seed, const T &v)
@@ -48,12 +72,12 @@ namespace obj_default
 	: curr_face_node(0), curr_mtl(0)
 	{
 		if (trafo != "")
-			this->trafo = lib3dmath::strtomat4f(trafo);
+			this->trafo = strtomat4f(trafo);
 		groups.push_back(Group());
 		Load(filename);
 	}
 
-	ObjFileLoader::ObjFileLoader(const std::string &filename, const lib3dmath::mat4f &trafo)
+	ObjFileLoader::ObjFileLoader(const std::string &filename, const matrix4x4f &trafo)
 	: curr_face_node(0), curr_mtl(0)
 	{
 		this->trafo = trafo;
@@ -65,7 +89,7 @@ namespace obj_default
 	: curr_face_node(0), curr_mtl(0)
 	{
 		if (trafo != "")
-			this->trafo = lib3dmath::strtomat4f(trafo);
+			this->trafo = strtomat4f(trafo);
 		groups.push_back(Group());
 	}
 
@@ -76,17 +100,17 @@ namespace obj_default
 
 	void ObjFileLoader::AddVertex(float x, float y, float z)
 	{
-		load_verts.push_back(lib3dmath::vec3f(x,y,z));
+		load_verts.push_back(vec3f(x,y,z));
 	}
 
 	void ObjFileLoader::AddTexCoord(float u, float v, float w)
 	{
-		load_texs.push_back(lib3dmath::vec3f(u,v,w));
+		load_texs.push_back(vec3f(u,v,w));
 	}
 
 	void ObjFileLoader::AddNormal(float x, float y, float z)
 	{
-		load_norms.push_back(lib3dmath::vec3f(x,y,z));
+		load_norms.push_back(vec3f(x,y,z));
 	}
 		
 	void ObjFileLoader::AddFaceNode(int vertex, int texcoord, int normal)
@@ -127,13 +151,13 @@ namespace obj_default
 
 	void ObjFileLoader::FaceDone()
 	{
-		groups.back().load_idxs_v.push_back(lib3dmath::vec3i(face_nodes[0].x-1, face_nodes[1].x-1, face_nodes[2].x-1));
-		groups.back().load_idxs_t.push_back(lib3dmath::vec3i(face_nodes[0].y-1, face_nodes[1].y-1, face_nodes[2].y-1));
-		groups.back().load_idxs_n.push_back(lib3dmath::vec3i(face_nodes[0].z-1, face_nodes[1].z-1, face_nodes[2].z-1));
+		groups.back().load_idxs_v.push_back(vec3i(face_nodes[0].x-1, face_nodes[1].x-1, face_nodes[2].x-1));
+		groups.back().load_idxs_t.push_back(vec3i(face_nodes[0].y-1, face_nodes[1].y-1, face_nodes[2].y-1));
+		groups.back().load_idxs_n.push_back(vec3i(face_nodes[0].z-1, face_nodes[1].z-1, face_nodes[2].z-1));
 		if (curr_face_node == 4) { // add second triangle, for quads
-			groups.back().load_idxs_v.push_back(lib3dmath::vec3i(face_nodes[2].x-1, face_nodes[3].x-1, face_nodes[0].x-1));
-			groups.back().load_idxs_t.push_back(lib3dmath::vec3i(face_nodes[2].y-1, face_nodes[3].y-1, face_nodes[0].y-1));
-			groups.back().load_idxs_n.push_back(lib3dmath::vec3i(face_nodes[2].z-1, face_nodes[3].z-1, face_nodes[0].z-1));
+			groups.back().load_idxs_v.push_back(vec3i(face_nodes[2].x-1, face_nodes[3].x-1, face_nodes[0].x-1));
+			groups.back().load_idxs_t.push_back(vec3i(face_nodes[2].y-1, face_nodes[3].y-1, face_nodes[0].y-1));
+			groups.back().load_idxs_n.push_back(vec3i(face_nodes[2].z-1, face_nodes[3].z-1, face_nodes[0].z-1));
 		}
 		curr_face_node = 0;
 
@@ -201,14 +225,14 @@ namespace obj_default
 	}
 
 	uint32_t add_vtn(unordered_map<triplet, uint32_t> &umap, const triplet &t, uint32_t &counter, 
-	                 vector<lib3dmath::vec3f> &nv, vector<lib3dmath::vec3f> &nt, vector<lib3dmath::vec3f> &nn,
-	                 vector<lib3dmath::vec3f> &ov, vector<lib3dmath::vec3f> &ot, vector<lib3dmath::vec3f> &on) {
+	                 vector<vec3f> &nv, vector<vec3f> &nt, vector<vec3f> &nn,
+	                 vector<vec3f> &ov, vector<vec3f> &ot, vector<vec3f> &on) {
 		if (umap.find(t) == umap.end()) {
 			nv.push_back(ov[t.v]);
 			if (ot.size() > t.t) nt.push_back(ot[t.t]);
-			else                 nt.push_back(lib3dmath::vec3f(0,0,0));
+			else                 nt.push_back(vec3f(0,0,0));
 			if (on.size() > t.n) nn.push_back(on[t.n]);
-			else                 nn.push_back(lib3dmath::vec3f(0,0,0));
+			else                 nn.push_back(vec3f(0,0,0));
 			umap[t] = counter;
 			return counter++;
 		}
@@ -218,8 +242,7 @@ namespace obj_default
 
 	void ObjFileLoader::Inflate()
 	{
-		typedef lib3dmath::vec3f vec3f;
-		typedef lib3dmath::vec3i vec3i;
+		typedef vec3f vec3f;
 
 		// sort groups by material
 		std::map<Mtl*, std::list<Group*> > groups_by_material;
@@ -276,12 +299,12 @@ namespace obj_default
 		load_norms.swap(new_n);
 	}
 
-	typedef pair<lib3dmath::vec3f, lib3dmath::vec3f> bb_t;
+	typedef pair<vec3f, vec3f> bb_t;
 
-	bb_t compute_bb(const vector<lib3dmath::vec3f> &load_verts, const vector<lib3dmath::vec3i> load_idxs_v) {
-		lib3dmath::vec3f min(FLT_MAX, FLT_MAX, FLT_MAX), max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+	bb_t compute_bb(const vector<vec3f> &load_verts, const vector<vec3i> load_idxs_v) {
+		vec3f min(FLT_MAX, FLT_MAX, FLT_MAX), max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 		for (int i = 0; i < load_idxs_v.size(); ++i) {
-			const lib3dmath::vec3f *v = &load_verts[load_idxs_v[i].x];
+			const vec3f *v = &load_verts[load_idxs_v[i].x];
 			if (v->x < min.x) min.x = v->x;  if (v->x > max.x) max.x = v->x;
 			if (v->y < min.y) min.y = v->y;  if (v->y > max.y) max.y = v->y;
 			if (v->z < min.z) min.z = v->z;  if (v->z > max.z) max.z = v->z;
@@ -308,8 +331,8 @@ namespace obj_default
 		return m;
 	}
 
-	lib3dmath::vec3f bb_diam(const bb_t &bb) {
-		return lib3dmath::vec3f(bb.second.x - bb.first.x,
+	vec3f bb_diam(const bb_t &bb) {
+		return vec3f(bb.second.x - bb.first.x,
 		                        bb.second.y - bb.first.y,
 		                        bb.second.z - bb.first.z);
 	}
@@ -349,7 +372,7 @@ namespace obj_default
 				}
 		}
 		else {
-			typedef lib3dmath::vec3f vec3f;
+			typedef vec3f vec3f;
 			float dir_expansion = f;
 			// look at all clusters
 			for (auto &by_material : groups_by_material) {

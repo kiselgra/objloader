@@ -41,7 +41,9 @@ AM_CPPFLAGS = -D WITH_DEFAULT_IMPLEMENTATION
 AM_YFLAGS = -d -plibobj
 AM_LFLAGS = -Plibobj -o lex.yy.c
 
-libobjloader_la_LIBADD = -l3dmath
+#libobjloader_la_LIBADD = -l3dmath
+#obj2pobj_LDFLAGS = -l3dmath
+#pobj2obj_LDFLAGS = -l3dmath
 
 library_includedir = $(includedir)/$(PACKAGE)-$(VERSION)
 library_include_HEADERS = objloader.h default.h

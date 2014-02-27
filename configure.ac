@@ -31,7 +31,6 @@ AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-AC_PROG_RANLIB
 
 
 
@@ -68,6 +67,8 @@ else
 fi
 CFLAGS="$CFLAGS $DEBUG_FLAGS"
 CXXFLAGS="$CXXFLAGS $DEBUG_FLAGS"
+
+AC_CHECK_LIB([mcm], [main])
 
 ## http://stackoverflow.com/questions/5298830/how-to-include-m4-files-in-autoconf
 AC_CONFIG_MACRO_DIR([.])
