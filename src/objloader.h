@@ -57,6 +57,9 @@ public:
 		std::string name;
 		std::string tex_a, tex_d, tex_s, tex_bump, tex_alpha;
 		int illum_model;
+
+		Mtl() : alpha(1) 
+		{}
 	};
 	std::map<std::string, Mtl*> materials;
 	bool parse_obj_without_bision;	//!< does not affect mtl!

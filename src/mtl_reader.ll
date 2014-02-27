@@ -83,7 +83,8 @@ ALLTHE3DSMAXSHIT [-a-zA-Z_0-9./]
 <INITIAL>Kd					{	OUT("Kd");		return newtoken(TK_KD);	}
 <INITIAL>Ks					{	OUT("Ks");		return newtoken(TK_KS);	}
 <INITIAL>Ke					{	OUT("Ke");		return newtoken(TK_KE);	}	
-<INITIAL>(d|Tr)				{	OUT("alpha");	return newtoken(TK_ALPHA);	}
+<INITIAL>d					{	OUT("alpha");	return newtoken(TK_ALPHA);	}
+<INITIAL>Tr					{	OUT("Tr");		return newtoken(TK_TRANSP);	}
 <INITIAL>illum				{	OUT("illum");	return newtoken(TK_ILLUM);	}
 <INITIAL>map_Ka				{	OUT("map_Ka");	BEGIN(EATIT);	return newtoken(TK_MAP_KA);	}
 <INITIAL>map_Kd				{	OUT("map_Kd");	BEGIN(EATIT);	return newtoken(TK_MAP_KD);	}

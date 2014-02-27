@@ -23,6 +23,7 @@
 %token TK_KE
 %token TK_TF
 %token TK_ALPHA
+%token TK_TRANSP
 %token TK_NS
 %token TK_REF_IDX
 %token TK_ILLUM
@@ -138,6 +139,7 @@ decl:
 	| TK_KE floating floating floating	{ float r=pop_float(), g=pop_float(), b=pop_float(); temp_mat.emi_r = r; temp_mat.emi_g = g; temp_mat.emi_b = b; }
 	| TK_TF floating floating floating	{ float r=pop_float(), g=pop_float(), b=pop_float(); temp_mat.trans_r = r; temp_mat.trans_g = g; temp_mat.trans_b = b; }
 	| TK_ALPHA floating					{ float a=pop_float(); temp_mat.alpha = a;	}
+	| TK_TRANSP floating				{ float a=1.0-pop_float(); temp_mat.alpha = a;	}
 	| TK_NS floating					{ float s=pop_float(); temp_mat.shininess = s;	}
 	| TK_REF_IDX floating				{ float s=pop_float(); temp_mat.ref_idx = s;	}
 	| TK_ILLUM index					{ int i=pop_int(); temp_mat.illum_model = i;	}

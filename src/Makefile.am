@@ -1,4 +1,5 @@
 lib_LTLIBRARIES = libobjloader.la
+bin_PROGRAMS = pobj2obj obj2pobj
 
 libobjloader_la_SOURCES = obj-grammar.cpp obj-grammar.hpp \
 						  mtl-grammar.cpp mtl-grammar.hpp \
@@ -8,6 +9,12 @@ libobjloader_la_SOURCES = obj-grammar.cpp obj-grammar.hpp \
 						  mtl_reader.cpp \
 						  objloader.cpp  objloader.h  \
 						  parser.h  token.h
+
+obj2pobj_SOURCES = $(libobjloader_la_SOURCES) pobj.h pobj.cpp obj2pobj.cpp
+obj2pobj_CPPFLAGS = $(AM_CPPFLAGS)
+
+pobj2obj_SOURCES = $(libobjloader_la_SOURCES) pobj.h pobj.cpp pobj2obj.cpp
+pobj2obj_CPPFLAGS = $(AM_CPPFLAGS)
 
 # obj lexer and grammar
 obj-grammar.hpp: obj-grammar.cpp
