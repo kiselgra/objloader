@@ -1,4 +1,3 @@
-/* $Id$ */
 #include "default.h"
 
 #include <iostream>
@@ -11,6 +10,7 @@
 #include <cstring>
 #include <float.h>
 #include <libgen.h>	// basename
+#include <unistd.h> // access
 
 #include <sys/types.h>
 #include <sys/stat.h>
