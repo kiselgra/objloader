@@ -2,16 +2,25 @@
 #include "default.h"
 
 #include <iostream>
+#include <stdexcept>
 #include <map>
 #include <list>
 #include <unordered_map>
+#include <fstream>
 
 #include <cstring>
 #include <float.h>
 #include <libgen.h>	// basename
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+
 using namespace std;
 		
+extern ObjLoader *yyobj;
+
 namespace obj_default {
 	struct triplet {
 		triplet(uint32_t v, uint32_t t, uint32_t n) : v(v), t(t), n(n) {}
@@ -69,7 +78,7 @@ namespace std {
 namespace obj_default 
 {
 	ObjFileLoader::ObjFileLoader(const std::string &filename, const std::string &trafo)
-	: curr_face_node(0), curr_mtl(0)
+	: curr_face_node(0), curr_mtl(0), inflated(false), collapsed(false)
 	{
 		if (trafo != "")
 			this->trafo = strtomat4f(trafo);
@@ -78,7 +87,7 @@ namespace obj_default
 	}
 
 	ObjFileLoader::ObjFileLoader(const std::string &filename, const matrix4x4f &trafo)
-	: curr_face_node(0), curr_mtl(0)
+	: curr_face_node(0), curr_mtl(0), inflated(false), collapsed(false)
 	{
 		this->trafo = trafo;
 		groups.push_back(Group());
@@ -86,7 +95,7 @@ namespace obj_default
 	}	
 
 	ObjFileLoader::ObjFileLoader(FakeMode fake, const std::string &trafo)
-	: curr_face_node(0), curr_mtl(0)
+	: curr_face_node(0), curr_mtl(0), inflated(false), collapsed(false)
 	{
 		if (trafo != "")
 			this->trafo = strtomat4f(trafo);
@@ -96,6 +105,27 @@ namespace obj_default
 	ObjFileLoader::~ObjFileLoader()
 	{
 		
+	}
+		
+	bool ObjFileLoader::Load(const std::string name) {
+		if (access(name.c_str(), F_OK) != 0) {
+			cerr << "cannot open " << name << endl;
+			return false;
+		}
+		ifstream test(name.c_str());
+		string word;
+		test >> word;
+		test.close();
+// 		cout << word << endl;
+		if (word == "pobj/libobjloader") {
+			// some initialization that would have been done in the ObjLoader c'tor.
+			obj_filename = name;	
+			yyobj = this;
+			return LoadBinaryObj(name);
+		}
+		else {
+			return ObjLoader::Load(name);
+		}
 	}
 
 	void ObjFileLoader::AddVertex(float x, float y, float z)
@@ -243,6 +273,8 @@ namespace obj_default
 	void ObjFileLoader::Inflate()
 	{
 		typedef vec3f vec3f;
+		if (inflated) return;
+		inflated = true;
 
 		// sort groups by material
 		std::map<Mtl*, std::list<Group*> > groups_by_material;
@@ -339,6 +371,8 @@ namespace obj_default
 
 	void ObjFileLoader::CollapseMaterials(float f)
 	{
+		if (collapsed) return;
+		collapsed = true;
 		std::map<Mtl*, std::list<Group*> > groups_by_material;
 		for (auto &g : groups)
 			groups_by_material[g.mat].push_back(&g);
@@ -419,6 +453,143 @@ namespace obj_default
 				}
 			}
 		}
+	}
+
+	bool ObjFileLoader::LoadMaterialFile(const std::string &name) {
+		mtlfile = name;
+		return ObjLoader::LoadMaterialFile(name);
+	}
+	
+	void w(FILE *out, const void *p, int size, int elems) {
+		if (fwrite(p, size, elems, out) != elems) {
+			cerr << "error in fwrite" << endl;
+			throw std::runtime_error("error in fwrite");
+		}
+	}
+	void w(FILE *out, uint32_t u) {
+		w(out, &u, sizeof(uint32_t), 1);
+	}
+	void w(FILE *out, const char *str) {
+		w(out, str, sizeof(char), strlen(str)+1);
+	}
+	void ObjFileLoader::SaveBinaryObj(const std::string &filename)
+	{
+		const char *header = (char*)"pobj/libobjloader\n";
+		const char *mtllib = mtlfile.c_str();
+		FILE *out = fopen(filename.c_str(), "wb");
+		// write header
+		w(out, header);
+		w(out, mtllib);
+		w(out, (uint32_t)inflated);
+		w(out, (uint32_t)collapsed);
+		// write base vertex data
+		w(out, (uint32_t)load_verts.size());
+		w(out, (uint32_t)load_norms.size());
+		w(out, (uint32_t)load_texs.size());
+		w(out, (uint32_t)groups.size());
+		w(out, &load_verts[0], sizeof(vec3f), load_verts.size());
+		w(out, &load_norms[0], sizeof(vec3f), load_norms.size());
+		w(out, &load_texs[0],  sizeof(vec3f), load_texs.size());
+		// write groups
+		for (list<Group>::iterator it = groups.begin(); it != groups.end(); ++it) {
+			w(out, it->name.c_str());
+			w(out, it->mat->name.c_str());
+			w(out, (uint32_t)it->mat_set_explicitly);
+			w(out, (uint32_t)it->load_idxs_v.size());
+			w(out, (uint32_t)it->load_idxs_n.size());
+			w(out, (uint32_t)it->load_idxs_t.size());
+			w(out, &it->load_idxs_v[0], sizeof(vec3i), it->load_idxs_v.size());
+			w(out, &it->load_idxs_n[0], sizeof(vec3i), it->load_idxs_n.size());
+			w(out, &it->load_idxs_t[0], sizeof(vec3i), it->load_idxs_t.size());
+		}
+		// done
+		fclose(out);
+	}
+	
+	bool ObjFileLoader::LoadBinaryObj(const std::string &filename)
+	{
+		cout << "hello [" << filename << "]" << endl;
+		const char *header = (char*)"pobj/libobjloader\n";
+		// {{{
+		int fd = open(filename.c_str(), O_RDONLY);
+		if (fd < 0) {
+			cerr << "cannot open " << filename << endl;
+			return false;
+		}
+		struct stat statbuf;
+		if (fstat(fd, &statbuf) < 0) {
+			cerr << "cannot stat " << filename << endl;
+			return false;
+		}
+		char *data;
+		if ((data = (char*)mmap(0, statbuf.st_size, PROT_READ, MAP_SHARED, fd, 0)) == (caddr_t) -1) {
+			cerr << "mmap error for " << filename << endl;
+			return false;
+		}
+
+		if (strcmp(header, data) != 0) {
+			cerr << "pobj file " << filename << " does not identify as binary obj." << endl;
+			return false;
+		}
+
+		// read header
+		unsigned int offset = strlen(data)+1;
+		mtlfile = string(data+offset);
+		offset += strlen(mtlfile.c_str())+1;
+
+		// load material file
+		if (!LoadMaterialFile(mtlfile)) {
+			cerr << "cannot open material file '" << mtlfile << "'!" << endl;
+			return false;
+		}
+		// }}}
+
+		uint32_t *u = (uint32_t*)(data+offset);
+		inflated = (bool)u[0];
+		collapsed = (bool)u[1];
+		offset += 2*sizeof(uint32_t);
+
+		// read base vertex data
+		u = (uint32_t*)(data+offset);
+		uint32_t n_verts  = u[0], 
+				 n_norms  = u[1], 
+				 n_texs   = u[2], 
+				 n_groups = u[3];
+		cout << n_verts << " " << n_norms << " " << n_texs << " " << n_groups << endl;
+		offset += 4*sizeof(uint32_t);
+		load_verts.resize(n_verts);
+		load_norms.resize(n_norms);
+		load_texs.resize(n_texs);
+		memcpy(&load_verts[0], data+offset, n_verts*sizeof(vec3f)); offset += n_verts*sizeof(vec3f);
+		memcpy(&load_norms[0], data+offset, n_norms*sizeof(vec3f)); offset += n_norms*sizeof(vec3f);
+		memcpy(&load_texs[0],  data+offset, n_texs*sizeof(vec3f));  offset += n_texs*sizeof(vec3f);
+
+		// read groups
+		for (int i = 0; i < n_groups; ++i) {
+			string name = string(data+offset);
+			string materialname = string(data+offset+name.length()+1);
+			StartGroup(name);
+			CurrentMaterial(materialname);
+
+			groups.back().mat = curr_mtl;
+			offset += groups.back().name.length()+1 + materialname.length()+1;
+			u = (uint32_t*)(data + offset);
+			uint32_t mat_set = u[0],
+					 n_v = u[1],
+					 n_n = u[2],
+					 n_t = u[3];
+			groups.back().mat_set_explicitly = (bool)mat_set;
+			offset += 4*sizeof(uint32_t);
+			groups.back().load_idxs_v.resize(n_v);
+			groups.back().load_idxs_n.resize(n_n);
+			groups.back().load_idxs_t.resize(n_t);
+			memcpy(&groups.back().load_idxs_v[0], data+offset, n_v*sizeof(vec3i)); offset += n_v*sizeof(vec3i);
+			memcpy(&groups.back().load_idxs_n[0], data+offset, n_n*sizeof(vec3i)); offset += n_n*sizeof(vec3i);
+			memcpy(&groups.back().load_idxs_t[0], data+offset, n_t*sizeof(vec3i)); offset += n_t*sizeof(vec3i);
+		}
+
+		munmap(data, statbuf.st_size);
+		return true;
 	}
 }
 

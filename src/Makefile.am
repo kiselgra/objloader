@@ -1,5 +1,6 @@
 lib_LTLIBRARIES = libobjloader.la
-bin_PROGRAMS = pobj2obj obj2pobj
+bin_PROGRAMS = obj2bobj
+noinst_PROGRAMS = pobj2obj obj2pobj
 
 libobjloader_la_SOURCES = obj-grammar.cpp obj-grammar.hpp \
 						  mtl-grammar.cpp mtl-grammar.hpp \
@@ -15,6 +16,9 @@ obj2pobj_CPPFLAGS = $(AM_CPPFLAGS)
 
 pobj2obj_SOURCES = $(libobjloader_la_SOURCES) pobj.h pobj.cpp pobj2obj.cpp
 pobj2obj_CPPFLAGS = $(AM_CPPFLAGS)
+
+obj2bobj_SOURCES = $(libobjloader_la_SOURCES) tobinary.cpp
+obj2bobj_CPPFLAGS = $(AM_CPPFLAGS)
 
 # obj lexer and grammar
 obj-grammar.hpp: obj-grammar.cpp

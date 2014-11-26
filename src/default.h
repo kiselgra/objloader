@@ -13,6 +13,7 @@ namespace obj_default
 {
 	class ObjFileLoader : public ObjLoader
 	{
+		bool inflated, collapsed;
 	public:
 		struct Group
 		{
@@ -34,6 +35,7 @@ namespace obj_default
 		vec3i face_nodes[4];
 
 		Mtl *curr_mtl;
+		std::string mtlfile;
 
 		bool create_mats;
 		bool create_des;
@@ -44,6 +46,8 @@ namespace obj_default
 		ObjFileLoader(const std::string &filename, const matrix4x4f &trafo);
 		ObjFileLoader(FakeMode fake, const std::string &trafo);
 		~ObjFileLoader();
+	
+		virtual bool Load(const std::string name);
 		
 		void AddVertex(float x, float y, float z);
 		void AddTexCoord(float u, float v, float w);
@@ -59,6 +63,7 @@ namespace obj_default
 		bool CurrentMaterial(const std::string &name);
 		void PushMaterial(const Mtl &m);
 		void StartGroup(const std::string &name);
+		bool LoadMaterialFile(const std::string &name);
 
 		/*! the v/t/n specification found in some obj files is not generally in gl-compatible n/n/n but the most compact n/m/o form.
 		 *  this function is called `infalte' because it does restore the gl-compatible layout.
@@ -67,6 +72,8 @@ namespace obj_default
 		std::map<Mtl*, std::list<Group*> > groups_by_material;
 		void CollapseMaterials(float f = 1e20);
 
+		void SaveBinaryObj(const std::string &filename);
+		bool LoadBinaryObj(const std::string &filename);
 		static const int NOT_PRESENT = -2;
 	};
 
