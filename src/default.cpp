@@ -82,6 +82,11 @@ namespace obj_default
 	{
 		if (trafo != "")
 			this->trafo = strtomat4f(trafo);
+		else
+			make_unit_matrix4x4f(&this->trafo);
+		matrix4x4f tmp;
+		invert_matrix4x4f(&tmp, &this->trafo);
+		transpose_matrix4x4f(&normal_trafo, &tmp);
 		groups.push_back(Group());
 		Load(filename);
 	}
@@ -90,6 +95,9 @@ namespace obj_default
 	: curr_face_node(0), curr_mtl(0), inflated(false), collapsed(false)
 	{
 		this->trafo = trafo;
+		matrix4x4f tmp;
+		invert_matrix4x4f(&tmp, &this->trafo);
+		transpose_matrix4x4f(&normal_trafo, &tmp);
 		groups.push_back(Group());
 		Load(filename);
 	}	
@@ -99,6 +107,11 @@ namespace obj_default
 	{
 		if (trafo != "")
 			this->trafo = strtomat4f(trafo);
+		else
+			make_unit_matrix4x4f(&this->trafo);
+		matrix4x4f tmp;
+		invert_matrix4x4f(&tmp, &this->trafo);
+		transpose_matrix4x4f(&normal_trafo, &tmp);
 		groups.push_back(Group());
 	}
 
@@ -130,7 +143,10 @@ namespace obj_default
 
 	void ObjFileLoader::AddVertex(float x, float y, float z)
 	{
-		load_verts.push_back(vec3f(x,y,z));
+		vec4f v(x, y, z, 1);
+		vec4f out;
+		multiply_matrix4x4f_vec4f(&out, &trafo, &v);
+		load_verts.push_back(vec3f(out.x,out.y,out.z));
 	}
 
 	void ObjFileLoader::AddTexCoord(float u, float v, float w)
@@ -140,7 +156,10 @@ namespace obj_default
 
 	void ObjFileLoader::AddNormal(float x, float y, float z)
 	{
-		load_norms.push_back(vec3f(x,y,z));
+		vec4f v(x, y, z, 0);
+		vec4f out;
+		multiply_matrix4x4f_vec4f(&out, &normal_trafo, &v);
+		load_norms.push_back(vec3f(out.x,out.y,out.z));
 	}
 		
 	void ObjFileLoader::AddFaceNode(int vertex, int texcoord, int normal)

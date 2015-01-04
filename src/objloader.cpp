@@ -164,7 +164,9 @@ bool ObjLoader::ugly_add_face(std::istream &in) {
 
 void ObjLoader::ugly_parse(std::istream &in)
 {
+	int cmd = 0;
 	while (true) {
+		++cmd;
 		string command;
 		in >> command;
 // 		if (in.eof() || command == "")
@@ -235,7 +237,7 @@ void ObjLoader::ugly_parse(std::istream &in)
 			string line; getline(in, line);
 		}
 		else {
-			cout << "UNKNOWn '" << command << "'" << endl;
+			cout << "UNKNOWn '" << command << "'    @cmd: " << cmd << endl;
 			exit(0);
 		}
 	}

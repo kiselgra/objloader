@@ -40,7 +40,7 @@ namespace obj_default
 		bool create_mats;
 		bool create_des;
 		std::string mat_name;
-		matrix4x4f trafo;
+		matrix4x4f trafo, normal_trafo;
 
 		ObjFileLoader(const std::string &filename, const std::string &trafo);
 		ObjFileLoader(const std::string &filename, const matrix4x4f &trafo);
